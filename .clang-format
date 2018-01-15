@@ -1,0 +1,5 @@
+---
+# We'll use defaults from the google style, but with 4 columns indentation.
+BasedOnStyle: google
+IndentWidth: 4
+---
