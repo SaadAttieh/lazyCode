@@ -3,6 +3,11 @@
 #include <iterator>
 #include <type_traits>
 #include <utility>
+#ifdef LAZY_CODE_NO_MACROS
+#define lazyCodeMacro(x)  // nothing
+#else
+#define lazyCodeMacro(x) x
+#endif
 
 namespace LazyCode {
 

@@ -122,5 +122,9 @@ inline FilterBuilder<Func> filter(Func&& func) {
     return FilterBuilder<Func>(std::forward<Func>(func));
 }
 
+lazyCodeMacro(
+#define filterQ(i, body) filter([](auto&& i) { return (body); })
+)
+
 }  // namespace LazyCode
 #endif /* LAZYCODE_FILTERRANGE_H_*/

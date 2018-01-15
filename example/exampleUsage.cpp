@@ -4,9 +4,7 @@
 using namespace std;
 using namespace LazyCode;
 int main() {
-    vector<int> a;
-    range(20) | a;
-    a | map([](auto i) { return i * 2; }) |
-        filter([](auto i) { return i % 3 == 0; }) |
-        map([](auto i) { std::cout << i << " "; }) | eval;
+    int i;
+    range(20) | mapQ(i, i * 2) | filterQ(i, i % 3 == 0) |
+        mapQ(i, (cout << i << " ", 0)) | eval;
 }

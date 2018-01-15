@@ -50,5 +50,10 @@ inline MapBuilder<Func> map(Func&& func) {
     return MapBuilder<Func>(std::forward<Func>(func));
 }
 
+lazyCodeMacro(
+#define mapQ(i, body) map([](auto&& i) { return (body); })
+)
+
 }  // namespace LazyCode
+
 #endif /* LAZYCODE_MAPRANGE_H_*/
