@@ -34,15 +34,14 @@ inline auto map(Func&& func, Container&& container) {
                toRange(std::forward<Container>(container)));
 }
 template <typename Func>
-class MapBuilder {
+class MapBuilder : public RangeBuilder {
     Func func;
 
    public:
     MapBuilder(Func func) : func(func) {}
     template <typename T>
-    friend inline auto operator|(T&& iterable,
-                                 const MapBuilder<Func>& builder) {
-        return map(builder.func, std::forward<T>(iterable));
+    inline auto build(T&& iterable) const {
+        return map(func, std::forward<T>(iterable));
     }
 };
 

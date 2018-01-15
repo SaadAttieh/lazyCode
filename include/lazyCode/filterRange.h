@@ -106,15 +106,14 @@ inline auto filter(Func&& func, Container&& container) {
                   toRange(std::forward<Container>(container)));
 }
 template <typename Func>
-class FilterBuilder {
+class FilterBuilder : public RangeBuilder {
     Func func;
 
    public:
     FilterBuilder(Func func) : func(func) {}
     template <typename T>
-    friend inline auto operator|(T&& iterable,
-                                 const FilterBuilder<Func>& builder) {
-        return filter(builder.func, std::forward<T>(iterable));
+    inline auto build(T&& iterable) {
+        return filter(func, std::forward<T>(iterable));
     }
 };
 

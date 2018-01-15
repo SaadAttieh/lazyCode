@@ -1,8 +1,8 @@
 #ifndef LAZYCODE_RANGEBASE_H_
 #define LAZYCODE_RANGEBASE_H_
-#include <utility>
 #include <iterator>
 #include <type_traits>
+#include <utility>
 
 namespace LazyCode {
 
@@ -13,6 +13,7 @@ template <typename T>
 using IsRef = typename std::is_same<RmRef<T>&, T>;
 
 struct RangeBase {};
+struct RangeBuilder {};
 
 template <typename T>
 using EnableIfRange =
@@ -22,6 +23,16 @@ using EnableIfRange =
 template <typename T>
 using EnableIfNotRange =
     typename std::enable_if<!std::is_base_of<RangeBase, RmRef<T>>::value,
+                            int>::type;
+
+template <typename T>
+using EnableIfRangeBuilder =
+    typename std::enable_if<std::is_base_of<RangeBuilder, RmRef<T>>::value,
+                            int>::type;
+
+template <typename T>
+using EnableIfNotRangeBuilder =
+    typename std::enable_if<!std::is_base_of<RangeBuilder, RmRef<T>>::value,
                             int>::type;
 
 template <typename Iterator>
@@ -80,7 +91,10 @@ inline IterRange<typename Container::iterator> toRange(Container&& container) {
 }
 
 template <typename Range>
-class RangeIterator : public std::iterator<std::input_iterator_tag, decltype(std::declval<Range>().getValue()), std::ptrdiff_t, void, void> {
+class RangeIterator
+    : public std::iterator<std::input_iterator_tag,
+                           decltype(std::declval<Range>().getValue()),
+                           std::ptrdiff_t, void, void> {
     Range& range;
 
    public:
@@ -94,6 +108,31 @@ class RangeIterator : public std::iterator<std::input_iterator_tag, decltype(std
         return range.hasValue();
     }
 };
+
+template <typename Range, typename Container, EnableIfRange<Range> = 0,
+          EnableIfNotRange<Container> = 0,
+          EnableIfNotRangeBuilder<Container> = 0>
+decltype(auto) operator|(Range&& range, Container&& container) {
+    while (range.hasValue()) {
+        container.emplace_back(std::move(range.getValue()));
+        range.moveNext();
+    }
+    return std::forward<Container>(container);
+}
+
+template <typename Range, typename Builder, EnableIfRangeBuilder<Builder> = 0>
+inline decltype(auto) operator|(Range&& range, Builder&& builder) {
+    return builder.build(std::forward<Range>(range));
+}
+enum EvalEnum { eval };
+
+template <typename Range, EnableIfRange<Range> = 0>
+void operator|(Range&& range, EvalEnum) {
+    while (range.hasValue()) {
+        range.getValue();
+        range.moveNext();
+    }
+}
 
 }  // namespace LazyCode
 #endif /*LAZYCODE_RANGEBASE_H_*/
