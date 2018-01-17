@@ -9,10 +9,8 @@ class MapRange : public RangeBase {
     Func func;
 
    public:
-    MapRange(RmRef<Range>&& range, Func func)
-        : range(std::move(range)), func(func) {}
-
-    MapRange(RmRef<Range>& range, Func func) : range(range), func(func) {}
+    MapRange(Range&& range, Func&& func)
+        : range(std::forward<Range>(range)), func(std::forward<Func>(func)) {}
 
     inline bool hasValue() { return range.hasValue(); }
     inline void moveNext() { range.moveNext(); }
@@ -24,8 +22,8 @@ class MapRange : public RangeBase {
 
 template <typename Func, typename Range, EnableIfRange<Range> = 0>
 inline auto map(Func&& func, Range&& range) {
-    return MapRange<Range, RmRef<Func>>(std::forward<Range>(range),
-                                        std::forward<Func>(func));
+    return MapRange<Range, Func>(std::forward<Range>(range),
+                                 std::forward<Func>(func));
 }
 
 template <typename Func, typename Container, EnableIfNotRange<Container> = 0>
@@ -33,15 +31,16 @@ inline auto map(Func&& func, Container&& container) {
     return map(std::forward<Func>(func),
                toRange(std::forward<Container>(container)));
 }
+
 template <typename Func>
 class MapBuilder : public RangeBuilder {
     Func func;
 
    public:
-    MapBuilder(Func func) : func(func) {}
+    MapBuilder(Func&& func) : func(std::forward<Func>(func)) {}
     template <typename T>
-    inline auto build(T&& iterable) const {
-        return map(func, std::forward<T>(iterable));
+    inline auto build(T&& iterable) {
+        return map(std::forward<Func>(func), std::forward<T>(iterable));
     }
 };
 
@@ -49,10 +48,6 @@ template <typename Func>
 inline MapBuilder<Func> map(Func&& func) {
     return MapBuilder<Func>(std::forward<Func>(func));
 }
-
-lazyCodeMacro(
-#define mapQ(i, body) map([](auto&& i) { return (body); })
-)
 
 }  // namespace LazyCode
 

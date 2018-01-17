@@ -3,5 +3,6 @@
 #include "filterRange.h"
 #include "mapRange.h"
 #include "numberRange.h"
+#include "printer.h"
 #include "rangeBase.h"
 #endif /* LAZYCODE_LAZYCODE_H_*/

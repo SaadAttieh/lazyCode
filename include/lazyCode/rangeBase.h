@@ -138,6 +138,9 @@ void operator|(Range&& range, EvalEnum) {
         range.moveNext();
     }
 }
-
+lazyCodeMacro(
+#define _l1(i, b) [&](auto&& i) { return (b); }
+#define _l2(i, j, b) [&](auto&& i, auto&& j) { return (b); }
+)
 }  // namespace LazyCode
 #endif /*LAZYCODE_RANGEBASE_H_*/

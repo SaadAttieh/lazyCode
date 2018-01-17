@@ -4,7 +4,6 @@
 using namespace std;
 using namespace LazyCode;
 int main() {
-    int i;
-    range(20) | mapQ(i, i * 2) | filterQ(i, i % 3 == 0) |
-        mapQ(i, (cout << i << " ", 0)) | eval;
+    range(20) | filter(_l1(i,i%2==0)) |
+        map(_l1(i,i*i)) | print(cout,",");
 }

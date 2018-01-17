@@ -46,15 +46,14 @@ class FilterRange
                                   IsRef<RangeReturnType<Range>>::value>
         BaseType;
     using BaseType::assignValue;
-
-   public:
+    friend BaseType;
     Range range;
     Func func;
     bool valueFound = false;
 
    public:
-    FilterRange(RmRef<Range>&& range, Func func)
-        : range(std::move(range)), func(func) {}
+    FilterRange(Range&& range, Func&& func)
+        : range(std::forward<Range>(range)), func(std::forward<Func>(func)) {}
     FilterRange(RmRef<Range>& range, Func func) : range(range), func(func) {}
 
     inline bool hasValue() {
@@ -96,8 +95,8 @@ class FilterRange
 
 template <typename Func, typename Range, EnableIfRange<Range> = 0>
 inline auto filter(Func&& func, Range&& range) {
-    return FilterRange<Range, RmRef<Func>>(std::forward<Range>(range),
-                                           std::forward<Func>(func));
+    return FilterRange<Range, Func>(std::forward<Range>(range),
+                                    std::forward<Func>(func));
 }
 
 template <typename Func, typename Container, EnableIfNotRange<Container> = 0>
@@ -105,15 +104,16 @@ inline auto filter(Func&& func, Container&& container) {
     return filter(std::forward<Func>(func),
                   toRange(std::forward<Container>(container)));
 }
+
 template <typename Func>
 class FilterBuilder : public RangeBuilder {
     Func func;
 
    public:
-    FilterBuilder(Func func) : func(func) {}
+    FilterBuilder(Func&& func) : func(std::forward<Func>(func)) {}
     template <typename T>
     inline auto build(T&& iterable) {
-        return filter(func, std::forward<T>(iterable));
+        return filter(std::forward<Func>(func), std::forward<T>(iterable));
     }
 };
 
@@ -121,10 +121,6 @@ template <typename Func>
 inline FilterBuilder<Func> filter(Func&& func) {
     return FilterBuilder<Func>(std::forward<Func>(func));
 }
-
-lazyCodeMacro(
-#define filterQ(i, body) filter([](auto&& i) { return (body); })
-)
 
 }  // namespace LazyCode
 #endif /* LAZYCODE_FILTERRANGE_H_*/
