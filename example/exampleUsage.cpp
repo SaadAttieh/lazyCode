@@ -4,8 +4,6 @@
 using namespace std;
 using namespace LazyCode;
 int main() {
-    auto a = range(20) | filter(_l1(i, i % 2 == 0)) | map(_l1(i, i * i)) |
-             vector<int>();
-    (a | print(cout, ",")) << endl;;
-    std::cout << (a | count()) << endl;;
+    int a = range(2,5,2) | filter(_l1(i, i % 2 == 0)) | map(_l1(i, i * i)) | product();
+    cout << a << endl;
 }

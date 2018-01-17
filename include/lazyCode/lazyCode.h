@@ -2,6 +2,7 @@
 #define LAZYCODE_LAZYCODE_H_
 #include "count.h"
 #include "filterRange.h"
+#include "fold.h"
 #include "mapRange.h"
 #include "numberRange.h"
 #include "print.h"
