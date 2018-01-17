@@ -3,6 +3,7 @@
 #include "count.h"
 #include "filterRange.h"
 #include "fold.h"
+#include "limitRange.h"
 #include "mapRange.h"
 #include "numberRange.h"
 #include "rangeBase.h"

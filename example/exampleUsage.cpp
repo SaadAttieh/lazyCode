@@ -3,4 +3,8 @@
 #include <vector>
 using namespace std;
 using namespace LazyCode;
-int main() { readLines(cin) | map(_l1(i, "$" + i)) | write(cout, "\n"); }
+int main() {
+    //
+    readLines(cin) | limit(5) | write(cout, "\n");
+    //
+}
