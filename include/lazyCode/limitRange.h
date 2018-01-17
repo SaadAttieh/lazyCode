@@ -15,6 +15,9 @@ class LimitRange : public RangeBase {
     inline bool hasValue() { return limit > 0 && range.hasValue(); }
     inline void moveNext() {
         --limit;
+        if (limit == 0) {
+            return;
+        }
         range.moveNext();
     }
     inline decltype(auto) getValue() { return range.getValue(); }
