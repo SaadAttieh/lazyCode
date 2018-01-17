@@ -4,5 +4,6 @@
 using namespace std;
 using namespace LazyCode;
 int main() {
-read<int>(cin) | write(cout, ',');
+string a = read<int>(cin) | writeString(",");
+cout << a << endl;
 }
