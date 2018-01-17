@@ -6,5 +6,6 @@
 #include "mapRange.h"
 #include "numberRange.h"
 #include "rangeBase.h"
+#include "readRange.h"
 #include "write.h"
 #endif /* LAZYCODE_LAZYCODE_H_*/

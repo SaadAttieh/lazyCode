@@ -58,23 +58,36 @@ inline SliceRange<Iterator> slice(const Iterator& first, const Iterator& last) {
     return SliceRange<RmRef<Iterator>>(first, last);
 }
 
-template <typename Container>
-struct ContainerRange : public SliceRange<typename Container::iterator> {
-    typedef SliceRange<typename Container::iterator> SliceRangeBase;
-    Container container;
+template <typename IteratorSource, typename Iterator>
+class OwningSliceRange : public RangeBase {
+   protected:
+    IteratorSource source;
+    Iterator first;
+    Iterator last;
 
-    ContainerRange(Container& container)
-        : SliceRangeBase(std::begin(container), std::end(container)),
-          container(std::move(container)) {
-        // need to override first and last as container was moved
-        SliceRangeBase::first = std::begin(container);
-        SliceRangeBase::last = std::end(container);
-    }
+   public:
+    template <typename Func1, typename Func2>
+    OwningSliceRange(IteratorSource&& source, Func1 firstProvider,
+                     Func2 lastProvider)
+        : source(std::forward<IteratorSource>(source)),
+          first(firstProvider(this->source)),
+          last(lastProvider(this->source)) {}
+
+    inline Iterator begin() { return first; }
+    inline Iterator end() { return last; }
+
+    inline bool hasValue() { return first != last; }
+    inline decltype(auto) getValue() { return *first; }
+    inline void moveNext() { ++first; }
 };
 
 template <typename Container>
-inline ContainerRange<Container> containerRange(Container&& container) {
-    return ContainerRange<RmRef<Container>>(std::forward<Container>(container));
+inline auto containerRange(Container&& container) {
+    return OwningSliceRange<RmRef<Container>,
+                            typename RmRef<Container>::iterator>(
+        std::forward<Container>(container),
+        [](auto& cont) { return std::begin(cont); },
+        [](auto& cont) { return std::end(cont); });
 }
 
 template <typename Container>
