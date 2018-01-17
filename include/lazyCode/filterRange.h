@@ -93,13 +93,13 @@ class FilterRange
     inline auto end() { return RangeIterator<FilterRange<Range, Func>>(*this); }
 };
 
-template <typename Func, typename Range, EnableIfRange<Range> = 0>
+template <typename Func, typename Range, EnableIfType<RangeBase,Range> = 0>
 inline auto filter(Func&& func, Range&& range) {
     return FilterRange<Range, Func>(std::forward<Range>(range),
                                     std::forward<Func>(func));
 }
 
-template <typename Func, typename Container, EnableIfNotRange<Container> = 0>
+template <typename Func, typename Container, EnableIfNotType<RangeBase,Container> = 0>
 inline auto filter(Func&& func, Container&& container) {
     return filter(std::forward<Func>(func),
                   toRange(std::forward<Container>(container)));

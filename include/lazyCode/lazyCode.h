@@ -5,6 +5,6 @@
 #include "fold.h"
 #include "mapRange.h"
 #include "numberRange.h"
-#include "print.h"
 #include "rangeBase.h"
+#include "write.h"
 #endif /* LAZYCODE_LAZYCODE_H_*/
