@@ -4,7 +4,6 @@
 #include <string>
 #include "rangeBase.h"
 namespace LazyCode {
-static constexpr const char EMPTY_STR[] = "";
 template <typename OutputStream, typename String1, typename String2,
           typename String3>
 class WriteerEvaluator : public RangeEvaluator {
@@ -21,7 +20,7 @@ class WriteerEvaluator : public RangeEvaluator {
           open(std::forward<String2>(open)),
           close(std::forward<String3>(close)) {}
 
-    template <typename T, EnableIfType<RangeBase,T> = 0>
+    template <typename T, EnableIfType<RangeBase, T> = 0>
     inline decltype(auto) evaluate(T&& iterable) {
         bool first = true;
         os << open;

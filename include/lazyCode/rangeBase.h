@@ -36,13 +36,13 @@ using EnableIfNotAnyRangeObject = typename std::enable_if<
     int>::type;
 
 template <typename Iterator>
-class IterRange : public RangeBase {
+class SliceRange : public RangeBase {
    protected:
     Iterator first;
     Iterator last;
 
    public:
-    IterRange(const Iterator& first, const Iterator& last)
+    SliceRange(const Iterator& first, const Iterator& last)
         : first(first), last(last) {}
 
     inline Iterator begin() { return first; }
@@ -54,40 +54,37 @@ class IterRange : public RangeBase {
 };
 
 template <typename Iterator>
-inline IterRange<Iterator> iterRange(const Iterator& first,
-                                     const Iterator& last) {
-    return IterRange<RmRef<Iterator>>(first, last);
+inline SliceRange<Iterator> slice(const Iterator& first, const Iterator& last) {
+    return SliceRange<RmRef<Iterator>>(first, last);
 }
 
 template <typename Container>
-struct IterRangeWithContainer : public IterRange<typename Container::iterator> {
-    typedef IterRange<typename Container::iterator> IterRangeBase;
+struct ContainerRange : public SliceRange<typename Container::iterator> {
+    typedef SliceRange<typename Container::iterator> SliceRangeBase;
     Container container;
 
-    IterRangeWithContainer(Container& container)
-        : IterRangeBase(std::begin(container), std::end(container)),
+    ContainerRange(Container& container)
+        : SliceRangeBase(std::begin(container), std::end(container)),
           container(std::move(container)) {
         // need to override first and last as container was moved
-        IterRangeBase::first = std::begin(container);
-        IterRangeBase::last = std::end(container);
+        SliceRangeBase::first = std::begin(container);
+        SliceRangeBase::last = std::end(container);
     }
 };
 
 template <typename Container>
-inline IterRangeWithContainer<Container> iterRangeWithBase(
-    Container&& container) {
-    return IterRangeWithContainer<RmRef<Container>>(
-        std::forward<Container>(container));
+inline ContainerRange<Container> containerRange(Container&& container) {
+    return ContainerRange<RmRef<Container>>(std::forward<Container>(container));
 }
 
 template <typename Container>
-inline IterRange<typename Container::iterator> toRange(Container& container) {
-    return iterRange(std::begin(container), std::end(container));
+inline SliceRange<typename Container::iterator> toRange(Container& container) {
+    return slice(std::begin(container), std::end(container));
 }
 
 template <typename Container>
-inline IterRange<typename Container::iterator> toRange(Container&& container) {
-    return iterRangeWithContainer(std::forward<Container>(container));
+inline SliceRange<typename Container::iterator> toRange(Container&& container) {
+    return containerRange(std::forward<Container>(container));
 }
 
 template <typename Range>
