@@ -3,7 +3,4 @@
 #include <vector>
 using namespace std;
 using namespace LazyCode;
-int main() {
-string a = read<int>(cin) | writeString(",");
-cout << a << endl;
-}
+int main() { readLines(cin) | map(_l1(i, "$" + i)) | write(cout, "\n"); }
