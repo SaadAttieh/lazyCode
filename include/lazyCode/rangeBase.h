@@ -125,10 +125,17 @@ decltype(auto) operator|(Range&& range, Container&& container) {
     return std::forward<Container>(container);
 }
 
-template <typename Range, typename Builder, EnableIfRangeBuilder<Builder> = 0>
+template <typename Range, typename Builder, EnableIfRange<Range> = 0,
+          EnableIfRangeBuilder<Builder> = 0>
 inline decltype(auto) operator|(Range&& range, Builder&& builder) {
     return builder.build(std::forward<Range>(range));
 }
+template <typename Container, typename Builder, EnableIfNotRange<Container> = 0,
+          EnableIfRangeBuilder<Builder> = 0>
+inline decltype(auto) operator|(Container&& container, Builder&& builder) {
+    return builder.build(toRange(std::forward<Container>(container)));
+}
+
 enum EvalEnum { eval };
 
 template <typename Range, EnableIfRange<Range> = 0>

@@ -1,5 +1,5 @@
-#ifndef LAZYCODE_PRINTER_H_
-#define LAZYCODE_PRINTER_H_
+#ifndef LAZYCODE_PRINT_H_
+#define LAZYCODE_PRINT_H_
 #include <iostream>
 #include <string>
 #include "rangeBase.h"
@@ -22,7 +22,7 @@ class PrinterBuilder : public RangeBuilder {
           close(std::forward<String3>(close)) {}
 
     template <typename T, EnableIfRange<T> = 0>
-    inline void build(T&& iterable) {
+    inline decltype(auto) build(T&& iterable) {
         bool first = true;
         os << open;
         while (iterable.hasValue()) {
@@ -35,11 +35,7 @@ class PrinterBuilder : public RangeBuilder {
             iterable.moveNext();
         }
         os << close;
-    }
-
-    template <typename T, EnableIfNotRange<T> = 0>
-    inline void build(T&& iterable) {
-        build(toRange(std::forward<T>(iterable)));
+        return std::forward<OutputStream>(os);
     }
 };
 
@@ -54,4 +50,4 @@ inline auto print(OutputStream&& os, String1&& sep = "", String2&& open = "",
 
 }  // namespace LazyCode
 
-#endif /* LAZYCODE_PRINTER_H_*/
+#endif /* LAZYCODE_PRINT_H_*/
