@@ -33,7 +33,7 @@ struct SpecialisedNumberRange
     friend class NumberRangeBase<SpecialisedNumberRange<Number>>;
     Number first;
     Number last;
-    Number increment;
+    const Number increment;
     SpecialisedNumberRange(Number first, Number last, Number increment)
         : first(first), last(last), increment(increment) {}
 };
@@ -43,7 +43,7 @@ struct InfiniteNumberRange
     : public NumberRangeBase<InfiniteNumberRange<Number>> {
     friend class NumberRangeBase<SpecialisedNumberRange<Number>>;
     Number first;
-    Number increment;
+    const Number increment;
     InfiniteNumberRange(Number first, Number increment)
         : first(first), increment(increment) {}
 

@@ -2,7 +2,6 @@
 #define LAZYCODE_LAZYCODE_H_
 #include "apply.h"
 #include "count.h"
-#include "enumeratedRange.h"
 #include "filterRange.h"
 #include "fold.h"
 #include "limitRange.h"
@@ -12,4 +11,5 @@
 #include "readRange.h"
 #include "utils.h"
 #include "write.h"
+#include "zipRange.h"
 #endif /* LAZYCODE_LAZYCODE_H_*/

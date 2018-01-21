@@ -40,4 +40,7 @@ int main() {
     // readmeExample();
     //    readmeExample2();
     //    readmeExample3();
+    for (auto x : enumerate(read<int>(cin))) {
+        cout << x.first << "," << x.second<< endl;
+    }
 }
