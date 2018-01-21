@@ -2,42 +2,49 @@
 # Cute and Efficient Is Definitely Possible 
 
 * Bringing the missing elements to C++.
-* Compossible, lazily evaluated algorithms for processing data such as map, filter and fold.
-* Easy handling of input and output streams, parsing integers, reading line by line, regex matching.
+* Compossible, lazily evaluated algorithms for processing data such as map, filter, fold, enumerated ranges and more.
+* Easy handling of input and output streams, parsing integers, reading line by line, etc.
 * Compact syntax showing clear flow of data.
 * Zero cost abstractions leveraging C++ templates.
 * Optionally enabled  macros to make the syntax even more cute.
 
-## Example
-Read in lines of text into a vector, one line per element.  Keep going until EOF is reached.  Sort the vector and then re print the lines.
+
+## Example 1:
+
+Read in lines of text into a vector, one line per element, until EOF is reached.  Sort the vector and then re print the lines.
 
 ```c++
-    vector<string> lines;
-    readLines(cin) | lines;
+    auto lines = readLines(cin) | vector<string>();
     sort(lines.begin(), lines.end());
+    lines | write(cout, "\n");
     lines | write(cout, "\n");
 ```
 
 Yup, that's it.  And it gets better...
 
+## Example 2:
+
 Read in up to 10 numbers from standard input.  For the numbers that are odd, ignore them.  For the numbers that are even, square them.  Sum up the squares and print the total.  Use minimal memory, i.e. do not store the numbers in a vector, after all, it could easily be more than 10 numbers.
 
 ```c++
+    //with macros enabled, see below for non macro version.
     int total = read<int>(cin) | limit(10) | filter(_l1(i, i % 2 == 0)) |
                 map(_l1(i, i * i)) | sum();
     cout << total << endl;
 ```
 
-__Wow__, that's compact.  Maybe too compact? If you are concerned, you can split that line up by assigning the intermediary objects to variables.  Since it is lazily evaluated, nothing will be read/written until the final sum() is applied.
+__Wow__, that's compact.  Maybe too compact? If you are concerned, you can split that line up into multiple expressions.  Take a look:
 
 ```c++
-    auto evenFilter = read<int>(cin) | limit(10) | filter(_l1(i, i % 2 == 0));
-    auto squares = evenFilter | map(_l1(i, i * i));
-    // trigger execution here
+    auto numbers = read<int>(cin) | limit(10);
+    auto evenNumbers = numbers | filter(_l1(i, i % 2 == 0));
+    auto squares = evenNumbers | map(_l1(i, i * i));
     int total = squares | sum();
+    cout << total << endl;
 ```
 
-Writing this in standard C++ is more cumbersome but more importantly, increases the chance for error.  For example this has a bug:
+  Even though it looks like multiple assignments/pass throughs are made, none of the expressions will be evaluated until the final pipe into the `sum()`.  The numbers are not stored in any intermediate container.  It is just as efficient as a loop with conditionals.  Yet such a loop would be more cumbersome an is more likely to contain errors.  For example, this has a bug.  Can you spot it?
+
 ```c++
     int total = 0;
     for (int i = 0; i < 10; i++) {
@@ -49,7 +56,7 @@ Writing this in standard C++ is more cumbersome but more importantly, increases 
     }
 ```
 
-The bug?  What if the user enters less than 10 numbers.  You'll be reading EOF into your total.
+__The bug?__  What if the user enters less than 10 numbers.  You'll be reading EOF symbols into your total.
 
 
 ## Who's concerned about the macros!
@@ -69,4 +76,12 @@ Now that we've sorted that out, from now on, examples are shown with the lambda 
 
 ##The docs:
 
-Here we cover the API.  Map, fold, filter, sum, product, fold, reading and writing files, counting and more. (TBC)
+Here we cover the API.
+* Number ranges
+* Piping
+* Mapping
+* Enumerate
+* Filtering
+* folding
+* Reading
+* Writing

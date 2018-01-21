@@ -12,8 +12,7 @@ vector, after all, it could easily be more than 10 numbers.
  */
 
 void readmeExample() {
-    vector<string> lines;
-    readLines(cin) | lines;
+    auto lines = readLines(cin) | vector<string>();
     sort(lines.begin(), lines.end());
     lines | write(cout, "\n");
 }
@@ -30,10 +29,15 @@ void readmeExample2() {
     cout << total << endl;
 }
 
+void readmeExample3() {
+    auto numbers = read<int>(cin) | limit(10);
+    auto evenNumbers = numbers | filter(_l1(i, i % 2 == 0));
+    auto squares = evenNumbers | map(_l1(i, i * i));
+    int total = squares | sum();
+    cout << total << endl;
+}
 int main() {
     // readmeExample();
-//    readmeExample2();
-    range(0, 10, 2) | enumerate() |
-        map(_l1(i, (cout << "(" << i.first << "," << i.second << ")", 0))) |
-        eval();
+    //    readmeExample2();
+    //    readmeExample3();
 }

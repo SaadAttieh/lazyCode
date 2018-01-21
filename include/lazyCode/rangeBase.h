@@ -102,9 +102,11 @@ inline SliceRange<typename Container::iterator> toRange(Container&& container) {
 
 template <typename Range>
 class RangeIterator
-    : public std::iterator<std::input_iterator_tag,
-                           decltype(std::declval<Range>().getValue()),
-                           std::ptrdiff_t, void, void> {
+    : public std::iterator<
+          std::input_iterator_tag,
+          RmRef<decltype(std::declval<Range>().getValue())>, std::ptrdiff_t,
+          const RmRef<decltype(std::declval<Range>().getValue())>,
+          decltype(std::declval<Range>().getValue())> {
     Range& range;
 
    public:
