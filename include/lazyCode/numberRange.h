@@ -39,6 +39,18 @@ struct SpecialisedNumberRange
 };
 
 template <typename Number>
+struct InfiniteNumberRange
+    : public NumberRangeBase<InfiniteNumberRange<Number>> {
+    friend class NumberRangeBase<SpecialisedNumberRange<Number>>;
+    Number first;
+    Number increment;
+    InfiniteNumberRange(Number first, Number increment)
+        : first(first), increment(increment) {}
+
+    inline bool hasValue() { return true; }
+};
+
+template <typename Number>
 inline auto range(Number last) {
     return StandardNumberRange<Number>(0, last);
 }
@@ -46,6 +58,11 @@ inline auto range(Number last) {
 template <typename Number>
 inline auto range(Number first, Number last) {
     return StandardNumberRange<Number>(first, last);
+}
+
+template <typename Number>
+inline auto infRange(Number first, Number increment) {
+    return InfiniteNumberRange<Number>(first, increment);
 }
 
 template <typename Number>
