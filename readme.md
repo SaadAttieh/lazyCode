@@ -74,14 +74,67 @@ int total = read<int>(cin) | limit(10) |
 
 Now that we've sorted that out, from now on, examples are shown with the lambda macros enabled.
 
-##The docs:
+# The docs:
 
 Here we cover the API.
+* Ranges, evaluators and piping:
 * Number ranges
-* Piping
-* Mapping
 * Enumerate
+* Mapping
 * Filtering
 * folding
 * Reading
 * Writing
+* Writing
+
+## Behind the scenes; Ranges, evaluators and piping:
+
+This gives some behind the scenes information. if you just want to get writing quickly, skip to the next section.
+
+Under all those cute expressions you'll be writing with *lazyCode* are two categories of objects; ranges and evaluators.  Ranges are objects that represent some kind of iterable.  They are used to generate a stream of values.  Most of the objects like map, filter, fold, zip, etc return ranges.  Ranges can be composed together, usually with the pipe `|`, simple to produce new new ranges.  For example, given a filter range `a` and a map range `b`, you can produce a range that filters then maps (in one go) with `a | b`.  The same notation works even if `a`` is an stl  container (e.g. std::vector), the container is wrapped in a range designed for iterating over containers.
+
+By default, ranges are lazily evaluated.  This means that unless explicitly invoked, ranges simply sit where they have been created, incurring no runtime costs.  There are three main ways to pull values out of ranges:
+
+1.  Use a range based for loop, `for (auto i: rangeObj) { ... }`.  Since ranges support `begin()` and `end()` they can be used anywhere input iterators may be used.
+1.  Pipe the range into an evaluator (see below).
+1.  Use the range interface (least recommended and not guarantied to be stable).
+
+Evaluators turn ranges into results.  They pull all the values from a range and usually return some kind of result.  For example, `count()` pulls all values from a range and returns the number of values pulled.  Evaluators are used by composing them with ranges in the same notation `range | evaluator`.
+
+Unless stated otherwise, whenever an object  `a`  is composed with another `b`, if `a` is a variable (lvalue/lvalue reference), `b` will only hold a reference to `a`.  However, if `a` is a temporary object (rvalue), which usually happens when you create a range inline, then `b` will own `a`.  That is, if `a` is a temporary, `a` will be moved into `b` such that `a` remains constructed until `b` is destructed.
+
+## Jumping write in;  let's begin with Number ranges.
+
+The most simple but often useful range, iterating over numbers.
+
+
+```c++
+    // iterate 0..5 (5 exclusive)
+    for (int x : range(5)) {
+    }
+    // iterate 10..20
+    for (int x : range(10, 20)) {
+    }
+    // iterate 0..10 in steps of 2
+    for (int x : range(0, 10, 2)) {
+    }
+    // iterate 1.0 to 2.0 in increments of 0.1
+    for (double x : range(1.0, 2.0, 0.1)) {
+    }
+    //iterate backwards (negative ranges not supported yet
+```
+
+## Piping:
+
+All the above can be piped directly into containers.
+
+```c++
+    // pipe into new vector
+    auto vec1 = range(5) | vector<int>();
+    // pipe into existing vector
+    vector<int> vec2;
+    range(5) | vec2;
+```
+
+
+tbc 

@@ -36,11 +36,27 @@ void readmeExample3() {
     int total = squares | sum();
     cout << total << endl;
 }
+
+inline void numberRangeExample() {
+    // iterate 0..5 (5 exclusive)
+    for (int x : range(5)) {
+    }
+    // iterate 10..20
+    for (int x : range(10, 20)) {
+    }
+    // iterate 0..10 in steps of 2
+    for (int x : range(0, 10, 2)) {
+    }
+    // iterate 1.0 to 2.0 in increments of 0.1
+    for (double x : range(1.0, 2.0, 0.1)) {
+    }
+    //iterate backwards (negative ranges not supported yet
+}
 int main() {
     // readmeExample();
     //    readmeExample2();
     //    readmeExample3();
     for (auto x : enumerate(read<int>(cin))) {
-        cout << x.first << "," << x.second<< endl;
+        cout << x.first << "," << x.second << endl;
     }
 }
