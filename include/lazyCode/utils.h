@@ -26,7 +26,7 @@ lazyCodeMacro(
 
     template <class F, class Tuple>
     constexpr auto apply(F && f, Tuple && t) {
-        return index_apply<std::tuple_size<LazyCode::RmRef<Tuple>>::value>(
+        return index_apply<std::tuple_size<RmRef<Tuple>>::value>(
             [&](auto... Is) {
                 return f(std::forward<decltype(std::get<Is>(t))>(
                     std::get<Is>(t))...);

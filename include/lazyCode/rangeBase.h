@@ -167,10 +167,5 @@ template <typename Container, typename Evaluator,
 inline decltype(auto) operator|(Container&& container, Evaluator&& evaluator) {
     return evaluator.evaluate(toRange(std::forward<Container>(container)));
 }
-
-lazyCodeMacro(
-#define _l1(i, b) [&](auto&& i) { return (b); }
-#define _l2(i, j, b) [&](auto&& i, auto&& j) { return (b); }
-)
 }  // namespace LazyCode
 #endif /*LAZYCODE_RANGEBASE_H_*/
