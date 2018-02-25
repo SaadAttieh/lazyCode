@@ -7,8 +7,9 @@
 namespace LazyCode {
 template <typename OutputStream, typename String1, typename String2,
           typename String3>
-class WriterEvaluator : public RangeEvaluator {
-    OutputStream os;
+class WriterEvaluator : public RangeEvaluator<OutputStream> {
+    using RangeEvaluator<OutputStream>::result;
+    bool first = true;
     String1 sep;
     String2 open;
     String3 close;
@@ -16,26 +17,27 @@ class WriterEvaluator : public RangeEvaluator {
    public:
     WriterEvaluator(OutputStream&& os, String1&& sep, String2&& open,
                     String3&& close)
-        : os(std::forward<OutputStream>(os)),
+        : RangeEvaluator<OutputStream>(std::forward<OutputStream>(os)),
           sep(std::forward<String1>(sep)),
           open(std::forward<String2>(open)),
           close(std::forward<String3>(close)) {}
 
-    template <typename T, EnableIfType<RangeBase, T> = 0>
-    inline decltype(auto) evaluate(T&& iterable) {
-        bool first = true;
-        os << open;
-        while (iterable.hasValue()) {
-            if (first) {
-                first = false;
-            } else {
-                os << sep;
-            }
-            os << iterable.getValue();
-            iterable.moveNext();
+    template <typename T>
+    inline bool push(T&& item) {
+        if (first) {
+            result << open;
+            first = false;
+        } else {
+            result << sep;
         }
-        os << close;
-        return std::forward<OutputStream>(os);
+        result << item;
+        return true;
+    }
+    inline void rangeEnd() {
+        if (first) {
+            result << open;
+        }
+        result << close;
     }
 };
 

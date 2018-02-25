@@ -19,8 +19,8 @@ void readmeExample() {
 
 void readmeExample2() {
     // with macros
-    int total = read<int>(cin) | limit(10) | filter(_l1(i, i % 2 == 0)) |
-                map(_l1(i, i * i)) | sum();
+    int total = read<int>(cin) | limit(10) | filter(lambda(i, i % 2 == 0)) |
+                map(lambda(i, i * i)) | sum();
     cout << total << endl;
     // without macros
     total = read<int>(cin) | limit(10) |
@@ -31,8 +31,8 @@ void readmeExample2() {
 
 void readmeExample3() {
     auto numbers = read<int>(cin) | limit(10);
-    auto evenNumbers = numbers | filter(_l1(i, i % 2 == 0));
-    auto squares = evenNumbers | map(_l1(i, i * i));
+    auto evenNumbers = numbers | filter(lambda(i, i % 2 == 0));
+    auto squares = evenNumbers | map(lambda(i, i * i));
     int total = squares | sum();
     cout << total << endl;
 }
@@ -50,13 +50,16 @@ inline void numberRangeExample() {
     // iterate 1.0 to 2.0 in increments of 0.1
     for (double x : range(1.0, 2.0, 0.1)) {
     }
-    //iterate backwards (negative ranges not supported yet
+    // iterate backwards (negative ranges not supported yet
+
+    // pipe into new vector
+    auto vec1 = range(5) | vector<int>();
+    // pipe into existing vector
+    vector<int> vec2;
+    range(5) | vec2;
 }
 int main() {
-    // readmeExample();
-    //    readmeExample2();
+    //     readmeExample();
+    //        readmeExample2();
     //    readmeExample3();
-    for (auto x : enumerate(read<int>(cin))) {
-        cout << x.first << "," << x.second << endl;
-    }
 }

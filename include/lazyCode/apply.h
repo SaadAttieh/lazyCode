@@ -4,14 +4,14 @@
 #include "rangeBase.h"
 namespace LazyCode {
 template <typename Func>
-class ApplyEvaluator : public RangeEvaluator {
+class ApplyEvaluator : public RangeEvaluator<void> {
     Func func;
 
    public:
     ApplyEvaluator(Func&& func) : func(std::forward<Func>(func)) {}
-    template <typename T, EnableIfType<RangeBase, T> = 0>
-    inline void evaluate(T&& iterable) {
-        iterable | map(func) | eval();
+    template <typename T>
+    inline bool push(T&& item) {
+        func(item);
     }
 };
 

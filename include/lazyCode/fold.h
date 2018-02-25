@@ -3,21 +3,19 @@
 #include "rangeBase.h"
 namespace LazyCode {
 template <typename Func, typename Accumulator>
-class FolderEvaluator : public RangeEvaluator {
+class FolderEvaluator : public RangeEvaluator<Accumulator> {
     Func func;
-    Accumulator accum;
 
    public:
     FolderEvaluator(Func&& func, Accumulator accum)
-        : func(std::forward<Func>(func)), accum(std::move(accum)) {}
-    template <typename T, EnableIfType<RangeBase, T> = 0>
-    inline decltype(auto) evaluate(T&& iterable) {
-        while (iterable.hasValue()) {
-            accum = std::move(func(accum, iterable.getValue()));
-            iterable.moveNext();
-        }
-        return accum;
+        : RangeEvaluator<Accumulator>(std::move(accum)),
+          func(std::forward<Func>(func)) {}
+    template <typename T>
+    inline bool push(T&& item) {
+        this->result = std::move(func(this->result, item));
+        return true;
     }
+    inline void rangeEnd() {}
 };
 
 template <typename Func, typename Accumulator>

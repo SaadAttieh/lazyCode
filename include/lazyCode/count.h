@@ -3,19 +3,15 @@
 #include "rangeBase.h"
 namespace LazyCode {
 template <typename Number>
-class CounterEvaluator : public RangeEvaluator {
+class CounterEvaluator : public RangeEvaluator<Number> {
    public:
-    template <typename T, EnableIfType<RangeBase, T> = 0>
-    inline Number evaluate(T&& iterable) {
-        Number count = 0;
-
-        while (iterable.hasValue()) {
-            ++count;
-            iterable.getValue();
-            iterable.moveNext();
-        }
-        return count;
+    CounterEvaluator() : RangeEvaluator<Number>(0) {}
+    template <typename T>
+    inline bool push(T&&) {
+        ++this->result;
+        return true;
     }
+    inline void rangeEnd() {}
 };
 
 template <typename Number = size_t>

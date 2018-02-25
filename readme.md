@@ -28,8 +28,8 @@ Read in up to 10 numbers from standard input.  For the numbers that are odd, ign
 
 ```c++
     //with macros enabled, see below for non macro version.
-    int total = read<int>(cin) | limit(10) | filter(_l1(i, i % 2 == 0)) |
-                map(_l1(i, i * i)) | sum();
+    int total = read<int>(cin) | limit(10) | filter(lambda(i, i % 2 == 0)) |
+                map(lambda(i, i * i)) | sum();
     cout << total << endl;
 ```
 
@@ -37,8 +37,8 @@ __Wow__, that's compact.  Maybe too compact? If you are concerned, you can split
 
 ```c++
     auto numbers = read<int>(cin) | limit(10);
-    auto evenNumbers = numbers | filter(_l1(i, i % 2 == 0));
-    auto squares = evenNumbers | map(_l1(i, i * i));
+    auto evenNumbers = numbers | filter(lambda(i, i % 2 == 0));
+    auto squares = evenNumbers | map(lambda(i, i * i));
     int total = squares | sum();
     cout << total << endl;
 ```
@@ -77,21 +77,22 @@ Now that we've sorted that out, from now on, examples are shown with the lambda 
 # The docs:
 
 Here we cover the API.
+
 * Ranges, evaluators and piping:
 * Number ranges
 * Enumerate
 * Mapping
 * Filtering
 * folding
-* Reading
-* Writing
-* Writing
+* Reading from streams
+* Writing  to streams
+
 
 ## Behind the scenes; Ranges, evaluators and piping:
 
 This gives some behind the scenes information. if you just want to get writing quickly, skip to the next section.
 
-Under all those cute expressions you'll be writing with *lazyCode* are two categories of objects; ranges and evaluators.  Ranges are objects that represent some kind of iterable.  They are used to generate a stream of values.  Most of the objects like map, filter, fold, zip, etc return ranges.  Ranges can be composed together, usually with the pipe `|`, simple to produce new new ranges.  For example, given a filter range `a` and a map range `b`, you can produce a range that filters then maps (in one go) with `a | b`.  The same notation works even if `a`` is an stl  container (e.g. std::vector), the container is wrapped in a range designed for iterating over containers.
+Under all those cute expressions you'll be writing with *lazyCode* are two categories of objects; ranges and evaluators.  Ranges are objects that represent some kind of iterable.  They are used to generate a stream of values.  Most of the objects like map, filter, fold, zip, etc return ranges.  Ranges can be composed together to produce new ranges, usually with the pipe `|` symbol.  For example, given a filter range `a` and a map range `b`, you can produce a range that filters then maps (in one go) with `a | b`.  The same notation works even if `a`` is an STL  container (e.g. std::vector).  The container is wrapped in a range designed for iterating over containers.
 
 By default, ranges are lazily evaluated.  This means that unless explicitly invoked, ranges simply sit where they have been created, incurring no runtime costs.  There are three main ways to pull values out of ranges:
 
@@ -99,7 +100,7 @@ By default, ranges are lazily evaluated.  This means that unless explicitly invo
 1.  Pipe the range into an evaluator (see below).
 1.  Use the range interface (least recommended and not guarantied to be stable).
 
-Evaluators turn ranges into results.  They pull all the values from a range and usually return some kind of result.  For example, `count()` pulls all values from a range and returns the number of values pulled.  Evaluators are used by composing them with ranges in the same notation `range | evaluator`.
+Evaluators turn ranges into results.  When piping a range into an evaluator, LazyCode pulls all the values from the range and pushes them to the evaluator.  Evaluators may then return a result based on the pushed values.  For example, `count()`  returns the number of values pushed, `write()` writes the pushed values to a stream, etc.  Evaluators are used by composing them with ranges in the same notation `range | evaluator`.
 
 Unless stated otherwise, whenever an object  `a`  is composed with another `b`, if `a` is a variable (lvalue/lvalue reference), `b` will only hold a reference to `a`.  However, if `a` is a temporary object (rvalue), which usually happens when you create a range inline, then `b` will own `a`.  That is, if `a` is a temporary, `a` will be moved into `b` such that `a` remains constructed until `b` is destructed.
 

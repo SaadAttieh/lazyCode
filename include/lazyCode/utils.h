@@ -8,8 +8,23 @@
 #include "rangeBase.h"
 namespace LazyCode {
 lazyCodeMacro(
-#define _l1(i, b) [&](auto&& i) { return (b); }
-#define _l2(i, j, b) [&](auto&& i, auto&& j) { return (b); }
+#define _completeLambda0(body) ) { return body; }
+#define _completeLambda1(arg1, body) auto&& arg1 _completeLambda0(body)
+#define _completeLambda2(arg1, arg2, body) \
+    auto &&arg1, _completeLambda1(arg2, body)
+#define _completeLambda3(arg1, arg2, arg3, body) \
+    auto &&arg1, _completeLambda2(arg2, arg3, body)
+#define _completeLambda4(arg1, arg2, arg3, arg4, body) \
+    auto &&arg1, _completeLambda3(arg2, arg3, arg4, body)
+#define _completeLambda5(arg1, arg2, arg3, arg4, arg5, body) \
+    auto &&arg1, _completeLambda4(arg2, arg3, arg4, arg5, body)
+#define _getCompleteLambdaOverload(_1, _2, _3, _4, _5, _6, NAME, ...) NAME
+#define _completeLambda(...)                                               \
+    _getCompleteLambdaOverload(                                            \
+        __VA_ARGS__, _completeLambda5, _completeLambda4, _completeLambda3, \
+        _completeLambda2, _completeLambda1, _completeLambda0)(__VA_ARGS__)
+#define lambda(...) [&]( _completeLambda(__VA_ARGS__)
+
     )
 
     // unpack tuple into arguments to function

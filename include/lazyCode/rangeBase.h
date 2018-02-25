@@ -27,12 +27,13 @@ using EnableIfType =
 template <typename T1, typename T2>
 using EnableIfNotType =
     typename std::enable_if<!std::is_base_of<T1, RmRef<T2>>::value, int>::type;
-struct RangeEvaluator;
+struct RangeEvaluatorBase {};
+
 template <typename T>
 using EnableIfNotAnyRangeObject = typename std::enable_if<
     !std::is_base_of<RangeBase, RmRef<T>>::value &&
         !std::is_base_of<RangeBuilder, RmRef<T>>::value &&
-        !std::is_base_of<RangeEvaluator, RmRef<T>>::value,
+        !std::is_base_of<RangeEvaluatorBase, RmRef<T>>::value,
     int>::type;
 
 template <typename Iterator>
@@ -144,30 +145,45 @@ inline decltype(auto) operator|(Container&& container, Builder&& builder) {
     return builder.build(toRange(std::forward<Container>(container)));
 }
 
-// evaluates ranges,  other classes inherit and override the member functions if
-// evaluation requires a result
-struct RangeEvaluator {
+/* evaluates ranges, other classes will extend and override push function to
+ * determine how the range should be evaluated. */
+template <typename Result>
+struct RangeEvaluator : public RangeEvaluatorBase {
+    Result result;
+    RangeEvaluator() {}
     template <typename T>
-    void evaluate(T&& range) {
-        while (range.hasValue()) {
-            range.getValue();
-            range.moveNext();
-        }
-    }
+    RangeEvaluator(T&& res) : result(std::forward<T>(res)) {}
+    inline Result get() { return std::move(result); }
+    inline operator Result() { return get(); }
 };
-inline auto eval() { return RangeEvaluator(); }
+template <>
+struct RangeEvaluator<void> : public RangeEvaluatorBase {};
+
+struct DoNothingEvaluator : public RangeEvaluator<void> {
+    template <typename T>
+    inline bool push(T&&) {
+        return true;
+    }
+    inline void rangeEnd() {}
+};
+inline auto eval() { return DoNothingEvaluator(); }
 
 template <typename Range, typename Evaluator,
           EnableIfType<RangeBase, Range> = 0,
-          EnableIfType<RangeEvaluator, Evaluator> = 0>
+          EnableIfType<RangeEvaluatorBase, Evaluator> = 0>
 inline decltype(auto) operator|(Range&& range, Evaluator&& evaluator) {
-    return evaluator.evaluate(std::forward<Range>(range));
+    while (range.hasValue() && evaluator.push(range.getValue())) {
+        range.moveNext();
+    }
+    evaluator.rangeEnd();
+    return std::forward<Evaluator>(evaluator);
 }
 template <typename Container, typename Evaluator,
           EnableIfNotAnyRangeObject<Container> = 0,
-          EnableIfType<RangeEvaluator, Evaluator> = 0>
+          EnableIfType<RangeEvaluatorBase, Evaluator> = 0>
 inline decltype(auto) operator|(Container&& container, Evaluator&& evaluator) {
-    return evaluator.evaluate(toRange(std::forward<Container>(container)));
+    return operator|(toRange(std::forward<Container>(container)),
+                     std::forward<Evaluator>(evaluator));
 }
 }  // namespace LazyCode
 #endif /*LAZYCODE_RANGEBASE_H_*/
