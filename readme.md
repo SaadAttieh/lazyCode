@@ -84,17 +84,17 @@ Now that we've sorted that out, from now on, examples are shown with the lambda 
 Here we cover the API.  First a quick contents with some reminders:
 
 1. Behind the sceens, for the interested.
-1. Input:
+2. Input:
     * Number ranges: `range(10), range(5,10,2)`
     * Input streams: `read<int>(cin), readLines(cin)`
-1. Processing:
+3. Processing:
     * For loops: `for (int i: read<int>(cin))`
     * Lazy mapper: `map(lambda(i,i*2), vector)` or `vector | map(lambda(i,i*2)`
     * Lazy filter: `filter(lambda(i,i < 10), vector)` or `vector | filter(lambda(i,i < 10)`
     * Composition: `readLines(cin) | filter(l,l.size() > 0) | map(toUpperCase)
     * Folding: `sum(), min(defaultVal), max(defaultVal), fold(lambda(i,j,i+j))`
     * Enumerate: `range | enumerate(), container | enumerate(), enumerate(container)`
-1. Output: 
+4. Output: 
     * Storing in container: `range | set<int>(), range | vector<int>()`
     * Writing to streams: `range | write(","), vector | write(',','[',']'),
 
