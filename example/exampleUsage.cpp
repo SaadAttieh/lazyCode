@@ -62,4 +62,7 @@ int main() {
     //     readmeExample();
     //        readmeExample2();
     //    readmeExample3();
+    // rangeforever over even numbers:
+    for (size_t i : infRange(0, 2)) {
+    }
 }

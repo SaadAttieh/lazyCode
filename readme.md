@@ -46,8 +46,10 @@ __Wow__, that's compact.  Maybe too compact? If you are concerned, you can split
     cout << total << endl;
 ```
 
-* Even though this expression is split over multiple lines, it is not any less efficient.  * The numbers are not stored in any intermediate container.
-* The final value (the sum of the squares of only even numbers) is calculated in one go, in a single loop from `standard in` to the `total` variable.
+* Even though this expression is split over multiple variable assignments, it is not any less efficient.
+* Nothing is executed until the final pipe into the `sum()`.
+* The final value (the sum of the squares of only even numbers) is calculated in a single while loop;  Read from `standard in`, test `filter condition`, and add to `total`.
+* The numbers are not stored in any intermediate container.
 * Writing the equivalent loop is more cumbersome and is more likely to contain errors.  For example, this has a bug.  Can you spot it?
 
 ```c++
@@ -61,7 +63,7 @@ __Wow__, that's compact.  Maybe too compact? If you are concerned, you can split
     }
 ```
 
-__The bug?__  What if the user enters less than 10 numbers.  You'll be reading EOF symbols into your total.
+__The bug?__  What if the user enters less than 10 numbers.  You'll be reading `EOF` symbols into your `total`.
 
 
 ## Even more cute:
@@ -79,17 +81,22 @@ Now that we've sorted that out, from now on, examples are shown with the lambda 
 
 # The docs:
 
-Here we cover the API.
+Here we cover the API.  First a quick contents with some reminders:
 
 * Ranges, evaluators and piping:
-* Number ranges
-* Enumerate
-* Mapping
-* Filtering
-* folding
-* Reading from streams
-* Writing  to streams
-
+* Input:
+    * Number ranges: `range(10), range(5,10,2)`
+    * Input streams: `read<int>(cin), readLines(cin)`
+* Processing:
+    * For loops: `for (int i: read<int>(cin))`
+    * Lazy mapper: `map(lambda(i,i*2), vector)` or `vector | map(lambda(i,i*2)`
+    * Lazy filter: `filter(lambda(i,i < 10), vector)` or `vector | filter(lambda(i,i < 10)`
+    * Composition: `readLines(cin) | filter(l,l.size() > 0) | map(toUpperCase)
+    * Folding: `sum(), min(defaultVal), max(defaultVal), fold(lambda(i,j,i+j))`
+    * Enumerate: `range | enumerate(), container | enumerate(), enumerate(container)`
+* Output: 
+    * Storing in container: `range | set<int>(), range | vector<int>()`
+    * Writing to streams: `range | write(","), vector | write(',','[',']'),
 
 ## Behind the scenes; Ranges, evaluators and piping:
 
@@ -108,7 +115,7 @@ Evaluators turn ranges into results.  When piping a range into an evaluator, Laz
 Unless stated otherwise, whenever an object  `a`  is composed with another `b`, if `a` is a variable (lvalue/lvalue reference), `b` will only hold a reference to `a`.  However, if `a` is a temporary object (rvalue), which usually happens when you create a range inline, then `b` will own `a`.  That is, if `a` is a temporary, `a` will be moved into `b` such that `a` remains constructed until `b` is destructed.
 
 ## Jumping write in;  let's begin with Number ranges.
-
+needs quick rewrite to match contents.
 The most simple but often useful range, iterating over numbers.
 
 
@@ -125,6 +132,9 @@ The most simple but often useful range, iterating over numbers.
     // iterate 1.0 to 2.0 in increments of 0.1
     for (double x : range(1.0, 2.0, 0.1)) {
     }
+    //rangeforever over even numbers:
+    for (size_t i: infRange(0,2)) {}
+}
     //iterate backwards (negative ranges not supported yet
 ```
 
@@ -141,4 +151,5 @@ All the above can be piped directly into containers.
 ```
 
 
-tbc 
+
+
