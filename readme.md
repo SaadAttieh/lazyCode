@@ -11,7 +11,8 @@
 
 ## Example 1:
 
-Read in lines of text into a vector, one line per element, until EOF is reached.  Sort the vector and then re print the lines.
+* Read in lines of text into a vector until EOF is reached, one line per vector element.
+* Sort the vector and then reprint the lines.
 
 ```c++
     auto lines = readLines(cin) | vector<string>();
