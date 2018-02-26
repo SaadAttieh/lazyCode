@@ -24,7 +24,10 @@ Yup, that's it.  And it gets better...
 
 ## Example 2:
 
-Read in up to 10 integers from standard input.  Skip odd integers.  Square the remaining numbers and sum their values.  Use minimal memory, i.e. do not store the numbers in a vector, after all, it could easily be more than 10 numbers.
+* Read in up to 10 integers from standard input.  
+* Skip odd integers.
+* Square the remaining numbers and sum their values.
+* Use minimal memory, i.e. do not store the numbers in a vector, after all, it could easily be more than 10 numbers.
 
 ```c++
 int total = read<int>(cin) | limit(10) |
