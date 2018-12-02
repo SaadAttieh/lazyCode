@@ -2,12 +2,25 @@
 # Cute and Efficient Is Definitely Possible 
 
 * Bringing the missing elements to C++.
-* Compossible, lazily evaluated algorithms for processing data such as map, filter, fold, enumerated ranges and more.
-* Easy handling of input and output streams, parsing integers, reading line by line, etc.
-* Compact syntax showing clear flow of data.
-* Zero cost abstractions leveraging C++ templates.
+* Compossible, lazily evaluated generators such as map, filter, fold, enumerated ranges and more.
+* Easy handling of input and output streams, reading line by line, parsing objects, etc.
+* Compact syntax:  Choice between
+    * Functional `fold(...,map(...,filter(...)))`
+    * Piped `filter(...) | map(...) | fold(...)`
+* Zero cost abstractions leveraging C++ templates, no macros involved.
+* Easily create new generators and integrate with existing ones.
 * _Optionally_ enabled  macros to make the syntax even more cute.
 
+
+#Quick examples:
+
+This is just some demonstrations of the coding style enabled with this library.  A full listing comes after the examples.
+
+
+```c++
+namespace lz = LazyCode;
+using namespace std;
+```
 
 ## Example 1:
 
@@ -15,42 +28,70 @@
 * Sort the vector and then reprint the lines.
 
 ```c++
-    auto lines = readLines(cin) | vector<string>();
+    auto lines = lz::readLines(cin) | lz::append(vector<string>());
     sort(lines.begin(), lines.end());
-    lines | write(cout, "\n");
-    lines | write(cout, "\n");
+    lz::generator(lines) | lz::write(cout, "\n");
 ```
 
 Yup, that's it.  And it gets better...
 
 ## Example 2:
 
-* Read in up to 10 integers from standard input.  
-* Skip odd integers.
-* Square the remaining numbers and sum their values.
-* Use minimal memory, i.e. do not store the numbers in a vector, after all, it could easily be more than 10 numbers.
+* Read in up to 10 integers from a file "test.txt".  
+* filter for the even numbers, square them and sum their values.
+* Do not store the numbers in a container, after all, it could easily be more than 10 numbers.
 
 ```c++
-int total = read<int>(cin) | limit(10) |
-            filter([](int i) { return i % 2 == 0; }) |
-            map([](int i) { return i * i; }) | sum();
+    int total = lz::read<int>(ifstream("test.txt")) | lz::limit(10) |
+                lz::filter([](int i) { return i % 2 == 0; }) |
+                lz::map([](int i) { return i * i; }) | lz::sum();
 ```
 
 __Wow__, that's compact.  Maybe too compact? If you are concerned, you can split that line up into multiple expressions.  Take a look:
 
 ```c++
-    auto numbers = read<int>(cin) | limit(10);
-    auto evenFilter = numbers | filter([](int i) { return i % 2 == 0; });
-    auto squares = evenFilter | map([](int i) { return i * i; });
-    int total = squares | sum();
-    cout << total << endl;
+    auto numbers = lz::read<int>(ifstream("test.txt")) | lz::limit(10);
+    auto evenFilter = numbers | lz::filter([](int i) { return i % 2 == 0; });
+    auto squares = evenFilter | lz::map([](int i) { return i * i; });
+    int total = squares | lz::sum();
 ```
 
 * Even though this expression is split over multiple variable assignments, it is not any less efficient.
-* Nothing is executed until the final pipe into the `sum()`.
-* The final value (the sum of the squares of only even numbers) is calculated in a single while loop;  Read from `standard in`, test `filter condition`, and add to `total`.
-* The numbers are not stored in any intermediate container.
-* Writing the equivalent loop is more cumbersome and is more likely to contain errors.  For example, this has a bug.  Can you spot it?
+* Each intermediate variable simply 
+describes a unit of code to be executed.  All held in stack.  Nothing is executed until the final pipe into the `sum()`.
+* The final value (the sum of the squares of only even numbers in a file) is calculated in a single pass with no intermediate container or memory allocations required.
+* for each number in `test.txt`, evaluate `filter condition`, and add to `total`.
+
+
+##Use a functional style instead:
+
+Piping does not work with you?  Simply use the functional interface:
+
+```c++
+    auto numbers = lz::limit(10, lz::read<int>(ifstream("test.txt")));
+    auto evenFilter = lz::filter([](int i) { return i % 2 == 0; }, numbers);
+    auto squares = lz::map([](int i) { return i * i; }, evenFilter);
+    int total = lz::sum(squares);
+```
+
+## Even more cute:
+
+Those long lambdas, what can we do?  You could use a macro *don't panic*, macros are optional, I only offer a single one for convenience.
+
+```c++
+    int total = lz::read<int>(cin) | lz::limit(10) |
+                lz::filter(lambda(i, i % 2 == 0)) | lz::map(lambda(i, i * i)) |
+                lz::sum();
+```
+
+The lambda macro (*if you want it*) is there to build the standard lambda, one that captures the surrounding context and that can take both lvalue and references.  It simply uses all but the last argument as parameter names and the last argument as the return expression to evaluate.  `lambda(a,b,c,expression)` maps to `[&] (auto&& a, auto&& b, auto && c) { return expression; }`.
+
+__It can be disabled___ by defining `#define LAZY_CODE_NO_MACROS` before including the `lazyCode` header.
+
+
+##A case for safety:
+
+Writing the equivalent of the above in plain old c++ is more cumbersome and can be argued to be less safe.  For example, this almost equivalent snippet has a bug.  Can you spot it?
 
 ```c++
     int total = 0;
@@ -63,93 +104,45 @@ __Wow__, that's compact.  Maybe too compact? If you are concerned, you can split
     }
 ```
 
-__The bug?__  What if the user enters less than 10 numbers.  You'll be reading `EOF` symbols into your `total`.
-
-
-## Even more cute:
-
-Those long lambdas, what can we do?  You could use a macro *don't panic, macros are optional, I only offer a single one for convenience*.
-
-```c++
-    int total = read<int>(cin) | limit(10) | filter(lambda(i, i % 2 == 0)) |
-                map(lambda(i, i * i)) | sum();
-    cout << total << endl;
-```
-
-
-Now that we've sorted that out, from now on, examples are shown with the lambda macro enabled.  
+__The bug?__  What if the user enters less than 10 numbers.  You'll be reading `EOF` symbols into your `total`.  Silly example, but the idea is there.  This is not only more compact and readable, it can enable safer code.
 
 # The docs:
 
-Here we cover the API.  First a quick contents with some reminders:
+Here we cover the API.  First a quick index:
 
-1. Behind the sceens, for the interested.
-2. Input:
-    * Number ranges: `range(10), range(5,10,2)`
-    * Input streams: `read<int>(cin), readLines(cin)`
-3. Processing:
-    * For loops: `for (int i: read<int>(cin))`
-    * Lazy mapper: `map(lambda(i,i*2), vector)` or `vector | map(lambda(i,i*2)`
-    * Lazy filter: `filter(lambda(i,i < 10), vector)` or `vector | filter(lambda(i,i < 10)`
-    * Composition: `readLines(cin) | filter(l,l.size() > 0) | map(toUpperCase)
-    * Folding: `sum(), min(defaultVal), max(defaultVal), fold(lambda(i,j,i+j))`
-    * Enumerate: `range | enumerate(), container | enumerate(), enumerate(container)`
+
+1. Input:
+    * `range(5)` generates `0,1,2,3,4,`
+    * `range(2,5)` generates `2,3,4`
+    * `range(0.1,1.0,0.2)` generates `0.1,0.3,0.5,0.7,0.9`
+    * `infRange(0,2)` infinite range, generates `0,2,4,6,8,...`
+    * `readLines(stream)` generates strings, one per line read from `stream`.
+    * `read<T>(stream)` read objects of type `T` from `stream`.
+    * `generator(container)` generate values from any iterable container, using the container's begin/end iterators. 
+2. Processing:
+    * Iterate over any generator `for (string line: lz::readLines(cin))`,
+    * Lazy map: `map(func,generator)` or `generator | map(func)`
+    * Lazy filter: `filter(func,generator)` or `generator | filter(func)`
+    * `map(toUpperCase, filter([] (auto&& l) { return l.size() > 0; }, readLines(cin) ))`
+    * Enumerate: `enumerate(generator)` or (generator | enumerate()``)
 4. Output: 
-    * Storing in container: `range | set<int>(), range | vector<int>()`
-    * Writing to streams: `range | write(","), vector | write(',','[',']'),
-
-## Behind the scenes; Ranges, evaluators and piping:
-
-This gives some behind the scenes information. if you just want to get writing quickly, skip to the next section.
-
-Under all those cute expressions you'll be writing with *lazyCode* are two categories of objects; ranges and evaluators.  Ranges are objects that represent some kind of iterable.  They are used to generate a stream of values.  Most of the objects like map, filter, fold, zip, etc return ranges.  Ranges can be composed together to produce new ranges, usually with the pipe `|` symbol.  For example, given a filter range `a` and a map range `b`, you can produce a range that filters then maps (in one go) with `a | b`.  The same notation works even if `a`` is an STL  container (e.g. std::vector).  The container is wrapped in a range designed for iterating over containers.
-
-By default, ranges are lazily evaluated.  This means that unless explicitly invoked, ranges simply sit where they have been created, incurring no runtime costs.  There are three main ways to pull values out of ranges:
-
-1.  Use a range based for loop, `for (auto i: rangeObj) { ... }`.  Since ranges support `begin()` and `end()` they can be used anywhere input iterators may be used.
-1.  Pipe the range into an evaluator (see below).
-1.  Use the range interface (least recommended and not guarantied to be stable).
-
-Evaluators turn ranges into results.  When piping a range into an evaluator, LazyCode pulls all the values from the range and pushes them to the evaluator.  Evaluators may then return a result based on the pushed values.  For example, `count()`  returns the number of values pushed, `write()` writes the pushed values to a stream, etc.  Evaluators are used by composing them with ranges in the same notation `range | evaluator`.
-
-Unless stated otherwise, whenever an object  `a`  is composed with another `b`, if `a` is a variable (lvalue/lvalue reference), `b` will only hold a reference to `a`.  However, if `a` is a temporary object (rvalue), which usually happens when you create a range inline, then `b` will own `a`.  That is, if `a` is a temporary, `a` will be moved into `b` such that `a` remains constructed until `b` is destructed.
-
-## Jumping write in;  let's begin with Number ranges.
-needs quick rewrite to match contents.
-The most simple but often useful range, iterating over numbers.
-
-
-```c++
-    // iterate 0..5 (5 exclusive)
-    for (int x : range(5)) {
-    }
-    // iterate 10..20
-    for (int x : range(10, 20)) {
-    }
-    // iterate 0..10 in steps of 2
-    for (int x : range(0, 10, 2)) {
-    }
-    // iterate 1.0 to 2.0 in increments of 0.1
-    for (double x : range(1.0, 2.0, 0.1)) {
-    }
-    //rangeforever over even numbers:
-    for (size_t i: infRange(0,2)) {}
-}
-    //iterate backwards (negative ranges not supported yet
-```
-
-## Piping:
-
-All the above can be piped directly into containers.
-
-```c++
-    // pipe into new vector
-    auto vec1 = range(5) | vector<int>();
-    // pipe into existing vector
-    vector<int> vec2;
-    range(5) | vec2;
-```
-
-
+    * Folding:
+        * `generator | sum(), sum(generator)`
+        * `generator | product(), product(generator)`
+        * `generator | min(), min(generator)`, returns optional which is empty (`nullopt`) if generator yields no values.
+        * `generator | min(defaultVal), min(defaultVal, generator)`, returns `defaultVal` if generator yields no values.
+        * `generator | max(), max(generator)`, returns optional which is empty (`nullopt`) if generator yields no values.
+        * `generator | max(defaultVal), max(defaultVal, generator)`, returns `defaultVal` if generator yields no values.
+        * `generator | fold(func, accumulator )` or `fold(func,accumulator,generator)`
+    * Storing in containers:
+        * Append to end of existing container c: `generator | append(c)` or `append(c,generator)`
+        * Create new container C and Append to it: `auto c = generator | append(C())` or `auto c = append(C(),generator)`
+        * Insert into existing unordered container c: `generator | insert(c)` or `insert(c,generator)`
+        * Create new unordered container C and insert into it: `auto c = generator | insert(C())` or `auto c = insert(C(),generator)`
+    * Writing to streams:
+        * Write to existing stream s: `generator | write(s)` or `write(s,generator)`
+        * Write to existing stream s interleaved with separator i: `generator | write(s,i)` or `write(s,i,generator)`
+        * Create new stream and write to it: `auto s = generator | write(Stream())` or `auto s = write(Stream(),generator)`
+        * Create new stream and write to it with separator i: `auto s = generator | write(Stream(),i)` or `auto s = write(Stream(),i,generator)`
 
 

@@ -1,65 +1,44 @@
+
 #include <lazyCode/lazyCode.h>
+#include <fstream>
 #include <iostream>
 #include <vector>
+namespace lz = LazyCode;
 using namespace std;
-using namespace LazyCode;
-
-/** Example from readme
-* Read in at most 10 numbers from standard input.  For the numbers that are odd,
-ignore them.  For the numbers that are even, square them.  Sum up the squares
-and print the total.  Use minimal memory, i.e. do not store the numbers in a
-vector, after all, it could easily be more than 10 numbers.
- */
-
-void readmeExample() {
-    auto lines = readLines(cin) | vector<string>();
+void readmeExample1() {
+    auto lines = lz::readLines(cin) | lz::append(vector<string>());
     sort(lines.begin(), lines.end());
-    lines | write(cout, "\n");
+    lz::generator(lines) | lz::write(cout, "\n");
 }
 
 void readmeExample2() {
-    // with macros
-    int total = read<int>(cin) | limit(10) | filter(lambda(i, i % 2 == 0)) |
-                map(lambda(i, i * i)) | sum();
-    cout << total << endl;
-    // without macros
-    total = read<int>(cin) | limit(10) |
-            filter([](int i) { return i % 2 == 0; }) |
-            map([](int i) { return i * i; }) | sum();
+    int total = lz::read<int>(ifstream("test.txt")) | lz::limit(10) |
+                lz::filter([](int i) { return i % 2 == 0; }) |
+                lz::map([](int i) { return i * i; }) | lz::sum();
+
     cout << total << endl;
 }
 
 void readmeExample3() {
-    auto numbers = read<int>(cin) | limit(10);
-    auto evenNumbers = numbers | filter(lambda(i, i % 2 == 0));
-    auto squares = evenNumbers | map(lambda(i, i * i));
-    int total = squares | sum();
+    auto numbers = lz::read<int>(ifstream("test.txt")) | lz::limit(10);
+    auto evenFilter = numbers | lz::filter([](int i) { return i % 2 == 0; });
+    auto squares = evenFilter | lz::map([](int i) { return i * i; });
+    int total = squares | lz::sum();
     cout << total << endl;
 }
 
-inline void numberRangeExample() {
-    // iterate 0..5 (5 exclusive)
-    for (int x : range(5)) {
-    }
-    // iterate 10..20
-    for (int x : range(10, 20)) {
-    }
-    // iterate 0..10 in steps of 2
-    for (int x : range(0, 10, 2)) {
-    }
-    // iterate 1.0 to 2.0 in increments of 0.1
-    for (double x : range(1.0, 2.0, 0.1)) {
-    }
-    // iterate backwards (negative ranges not supported yet
+void readmeExample4() {
+    auto numbers = lz::limit(10, lz::read<int>(ifstream("test.txt")));
+    auto evenFilter = lz::filter([](int i) { return i % 2 == 0; }, numbers);
+    auto squares = lz::map([](int i) { return i * i; }, evenFilter);
+    int total = lz::sum(squares);
+    cout << total << endl;
+}
 
-    // pipe into new vector
-    auto vec1 = range(5) | vector<int>();
-    // pipe into existing vector
-    vector<int> vec2;
-    range(5) | vec2;
+void readmeExample5() {
+    int total = lz::read<int>(cin) | lz::limit(10) |
+                lz::filter(lambda(i, i % 2 == 0)) | lz::map(lambda(i, i * i)) |
+                lz::sum();
+    cout << total << endl;
 }
-int main() {
-    //     readmeExample();
-    //        readmeExample2();
-    //    readmeExample3();
-}
+int main() {}

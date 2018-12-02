@@ -9,3 +9,4 @@ target_include_directories (lazyCode INTERFACE
                             $<INSTALL_INTERFACE:include>)
 target_compile_features (lazyCode INTERFACE ${CXX_FEATURES_USED})
 target_compile_definitions (lazyCode INTERFACE)
+include(CMakeLists-ExternalProjects.txt)
