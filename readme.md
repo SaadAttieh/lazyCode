@@ -12,7 +12,7 @@
 * _Optionally_ enabled  macros to make the syntax even more cute.
 
 
-#Quick examples:
+# Quick examples:
 
 This is just some demonstrations of the coding style enabled with this library.  A full listing comes after the examples.
 
@@ -63,7 +63,7 @@ describes a unit of code to be executed.  All held in stack.  Nothing is execute
 * for each number in `test.txt`, evaluate `filter condition`, and add to `total`.
 
 
-##Use a functional style instead:
+## Use a functional style instead:
 
 Piping does not work with you?  Simply use the functional interface:
 
@@ -89,7 +89,7 @@ The lambda macro (*if you want it*) is there to build the standard lambda, one t
 __It can be disabled___ by defining `#define LAZY_CODE_NO_MACROS` before including the `lazyCode` header.
 
 
-##A case for safety:
+## A case for safety:
 
 Writing the equivalent of the above in plain old c++ is more cumbersome and can be argued to be less safe.  For example, this almost equivalent snippet has a bug.  Can you spot it?
 
