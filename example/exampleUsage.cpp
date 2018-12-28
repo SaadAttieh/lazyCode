@@ -1,5 +1,6 @@
 
 #include <lazyCode/lazyCode.h>
+#include <algorithm>
 #include <fstream>
 #include <iostream>
 #include <vector>
@@ -7,7 +8,7 @@ namespace lz = LazyCode;
 using namespace std;
 void readmeExample1() {
     auto lines = lz::readLines(cin) | lz::append(vector<string>());
-    sort(lines.begin(), lines.end());
+    std::sort(lines.begin(), lines.end());
     lz::generator(lines) | lz::write(cout, "\n");
 }
 
@@ -41,5 +42,4 @@ void readmeExample5() {
                 lz::sum();
     cout << total << endl;
 }
-int main() {
-}
+int main() {}
