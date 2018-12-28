@@ -116,8 +116,9 @@ __The bug?__  What if the user enters less than 10 numbers.  You'll be reading `
 
 # The docs:
 
-Here we cover the API.  First a quick index:
+Here we cover the API.  First a quick index of the available functions (Full documentation follows):
 
+## Quick Index:
 
 1. Input:
     * `range(5)` generates `0,1,2,3,4,`
@@ -166,3 +167,11 @@ Here we cover the API.  First a quick index:
         }
     });
     ```
+
+
+## Full Docs:
+
+Markdown rendered docs coming soon.  The docs can also be read directly from the source:
+
+* [basicGenerators.h](include/lazyCode/basicGenerators.h), all the types of generators that can be made.
+* [basicCollectors.h](include/lazyCode/basicCollectors.h), all the functions for evaluating generators.
