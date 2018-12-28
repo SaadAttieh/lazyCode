@@ -41,4 +41,7 @@ void readmeExample5() {
                 lz::sum();
     cout << total << endl;
 }
-int main() {}
+int main() {
+    
+    cout << s << endl;
+}

@@ -127,6 +127,7 @@ Here we cover the API.  First a quick index:
     * Enumerate: `enumerate(generator)` or (generator | enumerate()``)
 4. Output: 
     * Folding:
+        * Count number of yields: `generator | count(), count(generator)`
         * `generator | sum(), sum(generator)`
         * `generator | product(), product(generator)`
         * `generator | min(), min(generator)`, returns optional which is empty (`nullopt`) if generator yields no values.
@@ -144,5 +145,6 @@ Here we cover the API.  First a quick index:
         * Write to existing stream s interleaved with separator i: `generator | write(s,i)` or `write(s,i,generator)`
         * Create new stream and write to it: `auto s = generator | write(Stream())` or `auto s = write(Stream(),generator)`
         * Create new stream and write to it with separator i: `auto s = generator | write(Stream(),i)` or `auto s = write(Stream(),i,generator)`
+        * Write to string using the above interface: `string s = (generator | write(std::ostringstream(),i)).str();`
 
 
