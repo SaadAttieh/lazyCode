@@ -42,6 +42,4 @@ void readmeExample5() {
     cout << total << endl;
 }
 int main() {
-    
-    cout << s << endl;
 }

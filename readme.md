@@ -1,7 +1,6 @@
 # Lazy Code
 # Cute and Efficient Is Definitely Possible 
 
-* Bringing the missing elements to C++.
 * Compossible, lazily evaluated generators such as map, filter, fold, enumerated ranges and more.
 * Easy handling of input and output streams, reading line by line, parsing objects, etc.
 * Compact syntax:  Choice between
@@ -146,5 +145,15 @@ Here we cover the API.  First a quick index:
         * Create new stream and write to it: `auto s = generator | write(Stream())` or `auto s = write(Stream(),generator)`
         * Create new stream and write to it with separator i: `auto s = generator | write(Stream(),i)` or `auto s = write(Stream(),i,generator)`
         * Write to string using the above interface: `string s = (generator | write(std::ostringstream(),i)).str();`
-
-
+5. Creating your own generators:
+    * More details coming soon.  Here a toy example, a generator that generates powers of 2 up to 1024.
+    ```c++
+    auto g = lz::generator(1, [](int i) -> lz::optional<int> {
+        i *= 2;
+        if (i <= 1024) {
+            return i;
+        } else {
+            return lz::nullopt;
+        }
+    });
+    ```
