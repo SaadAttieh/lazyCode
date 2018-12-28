@@ -105,6 +105,18 @@ Writing the equivalent of the above in plain old c++ is more cumbersome and can 
 
 __The bug?__  What if the user enters less than 10 numbers.  You'll be reading `EOF` symbols into your `total`.  Silly example, but the idea is there.  This is not only more compact and readable, it can enable safer code.
 
+
+#installation:
+
+
+The project is built as a standard Cmake header only interface and can be included via cmake's external_project_add or as a sub directory.  Exact instructions for this are coming soon.
+
+
+__For your convenience__, a single header is also maintained in the repo's top level directory `single_header`.
+
+Download the header file here: [lazyCode.h](single_header/lazyCode.h)
+
+
 # The docs:
 
 Here we cover the API.  First a quick index:
