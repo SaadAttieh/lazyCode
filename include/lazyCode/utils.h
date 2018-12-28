@@ -5,6 +5,7 @@
 #include <sstream>
 #include <tuple>
 #include <utility>
+#include "optional/optional.hpp"
 #ifdef LAZY_CODE_NO_MACROS
 #define lazyCodeMacro(x)  // nothing
 #else
