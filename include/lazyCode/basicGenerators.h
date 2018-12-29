@@ -288,7 +288,9 @@ decltype(auto) enumerate(size_t count = 0, Generator&& gen = GeneratorHole()) {
  * return a generator that reads from the given stream.  The generated type (the
  * type of values pulled from the stream) must be specified as the first
  * template parameter.  For example, to read integers from the stream, use
- * `read<int>`.  */
+ * `read<int>`.  If an lvalue is given, only a reference to the stream is held.
+ * If a rvalue is given, the generator takes ownership, the stream is moved into
+ * the generator.*/
 template <typename ReadType, typename Stream>
 auto read(Stream&& stream) {
     struct Reader {
@@ -311,7 +313,9 @@ auto read(Stream&& stream) {
 
 /*
  * return a generator that reads lines from the given stream.  The generator
- * yields a new string for each line.*/
+ * yields a new string for each line.  If an lvalue is given, only a reference
+ * to the stream is held.  If a rvalue is given, the generator takes ownership,
+ * the stream is moved into the generator.*/
 template <typename Stream>
 auto readLines(Stream&& stream) {
     return generator(detail::wrapIfRef(std::forward<Stream>(stream)),

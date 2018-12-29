@@ -215,9 +215,11 @@ decltype(auto) write(Stream&& stream, Interleave i,
  * given container, using container.emplace_back().  For unordered containers,
  * see `insert`.  Note that a rvalue can be given as the container parameter,
  * for example constructing a new container inline (`append(vector<int>())`), in
- * which case the container will be returned. If the generator is not specified,
- * a collector is returned. Collectors remember the operation to be executed.
- * The operation is executed when a generator is piped `|` to it.
+ * which case the collector stores the container and returns it after appending
+ * the values. Otherwise, only a reference to the container is held by the
+ * collector.  If the generator is not specified, a collector is returned.
+ * Collectors remember the operation to be executed. The operation is executed
+ * when a generator is piped `|` to it.
  */
 template <typename Container, typename Generator = GeneratorHole,
           detail::EnableIfType<detail::GeneratorBase, Generator> = 0>
@@ -235,10 +237,12 @@ decltype(auto) append(Container&& container,
  * given container, using container.emplace().  This is for unordered
  * containers.  For ordered containers, see `append`.  Note that a rvalue can be
  * given as the container parameter, for example constructing a new container
- * inline (`append(set<int>())`), in which case the container will be returned.
- * If the generator is not specified, a collector is returned. Collectors
- * remember the operation to be executed. The operation is executed when a
- * generator is piped `|` to it.
+ * inline (`append(set<int>())`), in
+ * which case the collector stores the container and returns it after inserting
+ * the values. Otherwise, only a reference to the container is held by the
+ * collector. If the generator is not specified, a collector is returned.
+ * Collectors remember the operation to be executed. The operation is executed
+ * when a generator is piped `|` to it.
  */
 template <typename Container, typename Generator = GeneratorHole,
           detail::EnableIfType<detail::GeneratorBase, Generator> = 0>
