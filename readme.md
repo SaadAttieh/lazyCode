@@ -128,13 +128,17 @@ Here we cover the API.  First a quick index of the available functions (Full doc
     * `readLines(stream)` generates strings, one per line read from `stream`.
     * `read<T>(stream)` read objects of type `T` from `stream`.
     * `generator(container)` generate values from any iterable container, using the container's begin/end iterators. 
+    * `slice(container,startIndex,endIndex)` generate values from any iterable container, starting at position `std::begin(container) + startIndex` (inclusive) and ending at `std::begin(container) + endIndex` (exclusive).
+    * `slice(startIter,endIter)` generate values from a pair of iterators, yielding values from `startIter` (inclusive) to `endIter` (exclusive).
 2. Processing:
-    * Iterate over any generator `for (string line: lz::readLines(cin))`,
     * Lazy map: `map(func,generator)` or `generator | map(func)`
     * Lazy filter: `filter(func,generator)` or `generator | filter(func)`
     * `map(toUpperCase, filter([] (auto&& l) { return l.size() > 0; }, readLines(cin) ))`
-    * Enumerate: `enumerate(generator)` or (generator | enumerate()``)
+    * Enumerate: `enumerate(generator)` or `generator | enumerate()`
+    * zip: `zip(generator1,generator2)`
 4. Output: 
+    * forEach: `generator | forEach(func)` or `forEach(func,generator)`
+    * for loop: `for (auto i: generator)`,
     * Folding:
         * Count number of yields: `generator | count(), count(generator)`
         * `generator | sum(), sum(generator)`
