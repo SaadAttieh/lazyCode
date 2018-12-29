@@ -64,26 +64,66 @@ auto range(Number end) {
     return range(((Number)0), end, 1);
 }
 
+
 /*
- * return a generator that iterates through a container from position start
- * (inclusive) to position end (exclusive).
- */
-template <typename Container>
-auto slice(Container&& container, size_t start, size_t end) {
-    auto first = std::begin(container) + start;
-    auto last = std::begin(container) + end;
-    return generator(wrapIfRef(std::forward<Container>(container)),
-                     [first = std::move(first), last = std::move(last)](
-                         auto&&) mutable -> OptionOrRef<decltype(*first)> {
-                         if (first == last) {
+* Create a generator from a container.  The generator uses the containers begin and end iterators via `std::begin, std::end`.  If an rvalue is given, the generator will take ownership of the container and move it into the generator object, otherwise the generator will only hold a reference to the container.
+*/
+template <typename Container,
+          detail::EnableIfNotType<detail::GeneratorBase, Container> = 0>
+decltype(auto) generator(Container&& container) {
+    typedef detail::RmRef<decltype(std::begin(container))> Iter;
+    typedef decltype(*std::begin(container)) IterValueType;
+    struct Iterable {
+        Container container;
+        Iter first;
+        Iter last;
+        Iterable(Container&& container)
+            : container(std::forward<Container>(container)),
+              first(std::begin(this->container)),
+              last(std::end(this->container)) {}
+    };
+    return generator(Iterable(std::forward<Container>(container)),
+                     [](
+                         auto&& iter) mutable -> OptionOrRef<IterValueType> {
+                         if (iter.first == iter.last) {
                              return nullopt;
                          }
-                         decltype(auto) val = *first;
-                         ++first;
+                         decltype(auto) val = *(iter.first);
+                         ++iter.first;
                          return val;
                      });
 }
 
+/*
+ * return a generator that iterates through a container from position start
+ * (inclusive) to position end (exclusive).
+  If an rvalue is given, the generator will take ownership of the container and move it into the generator object, otherwise the generator will only hold a reference to the container.
+*/
+template <typename Container,
+          detail::EnableIfNotType<detail::GeneratorBase, Container> = 0>
+decltype(auto) slice(Container&& container, size_t start, size_t last) {
+    typedef detail::RmRef<decltype(std::begin(container))> Iter;
+    typedef decltype(*std::begin(container)) IterValueType;
+    struct Iterable {
+        Container container;
+        Iter first;
+        Iter last;
+        Iterable(Container&& container, size_t start, size_t last)
+            : container(std::forward<Container>(container)),
+              first(std::begin(this->container) + start),
+              last(std::begin(this->container) + last) {}
+    };
+    return generator(Iterable(std::forward<Container>(container),start,last),
+                     [](
+                         auto&& iter) mutable -> OptionOrRef<IterValueType> {
+                         if (iter.first == iter.last) {
+                             return nullopt;
+                         }
+                         decltype(auto) val = *(iter.first);
+                         ++iter.first;
+                         return val;
+                     });
+}
 /*
  * Map one generator to another.  Produce a generator that returns the values
  * produced by another generator applied to the given function.  The given

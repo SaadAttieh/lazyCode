@@ -54,24 +54,6 @@ auto generator(MemberIn member, ProducerFuncIn producer) {
         std::forward<MemberIn>(member), std::forward<ProducerFuncIn>(producer));
 }
 
-template <typename Container,
-          detail::EnableIfNotType<detail::GeneratorBase, Container> = 0>
-decltype(auto) generator(Container&& container) {
-    using namespace detail;
-    auto first = std::begin(container);
-    auto last = std::end(container);
-    return generator(wrapIfRef(std::forward<Container>(container)),
-                     [first = std::move(first), last = std::move(last)](
-                         auto&&) mutable -> OptionOrRef<decltype(*first)> {
-                         if (first == last) {
-                             return nullopt;
-                         }
-                         decltype(auto) val = *first;
-                         ++first;
-                         return val;
-                     });
-}
-
 template <typename BuilderFunc>
 struct GeneratorBuilder {
     BuilderFunc build;
