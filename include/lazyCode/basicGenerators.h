@@ -64,10 +64,12 @@ auto range(Number end) {
     return range(((Number)0), end, 1);
 }
 
-
 /*
-* Create a generator from a container.  The generator uses the containers begin and end iterators via `std::begin, std::end`.  If an rvalue is given, the generator will take ownership of the container and move it into the generator object, otherwise the generator will only hold a reference to the container.
-*/
+ * Create a generator from a container.  The generator uses the containers begin
+ * and end iterators via `std::begin, std::end`.  If an rvalue is given, the
+ * generator will take ownership of the container and move it into the generator
+ * object, otherwise the generator will only hold a reference to the container.
+ */
 template <typename Container,
           detail::EnableIfNotType<detail::GeneratorBase, Container> = 0>
 decltype(auto) generator(Container&& container) {
@@ -83,8 +85,31 @@ decltype(auto) generator(Container&& container) {
               last(std::end(this->container)) {}
     };
     return generator(Iterable(std::forward<Container>(container)),
-                     [](
-                         auto&& iter) mutable -> OptionOrRef<IterValueType> {
+                     [](auto&& iter) mutable -> OptionOrRef<IterValueType> {
+                         if (iter.first == iter.last) {
+                             return nullopt;
+                         }
+                         decltype(auto) val = *(iter.first);
+                         ++iter.first;
+                         return val;
+                     });
+}
+
+/*
+ * Create a generator from a pair of iterators first and last.  The generator
+ * container yields values from first (inclusive) to last (exclusive).
+ */
+template <typename Iter>
+decltype(auto) slice(Iter first, Iter last) {
+    typedef decltype(*first) IterValueType;
+    struct Iterable {
+        Iter first;
+        Iter last;
+        Iterable(Iter first, Iter last)
+            : first(std::move(first)), last(std::move(last)) {}
+    };
+    return generator(Iterable(std::move(first), std::move(last)),
+                     [](auto&& iter) mutable -> OptionOrRef<IterValueType> {
                          if (iter.first == iter.last) {
                              return nullopt;
                          }
@@ -97,7 +122,9 @@ decltype(auto) generator(Container&& container) {
 /*
  * return a generator that iterates through a container from position start
  * (inclusive) to position end (exclusive).
-  If an rvalue is given, the generator will take ownership of the container and move it into the generator object, otherwise the generator will only hold a reference to the container.
+  If an rvalue is given, the generator will take ownership of the container and
+ move it into the generator object, otherwise the generator will only hold a
+ reference to the container.
 */
 template <typename Container,
           detail::EnableIfNotType<detail::GeneratorBase, Container> = 0>
@@ -113,9 +140,8 @@ decltype(auto) slice(Container&& container, size_t start, size_t last) {
               first(std::begin(this->container) + start),
               last(std::begin(this->container) + last) {}
     };
-    return generator(Iterable(std::forward<Container>(container),start,last),
-                     [](
-                         auto&& iter) mutable -> OptionOrRef<IterValueType> {
+    return generator(Iterable(std::forward<Container>(container), start, last),
+                     [](auto&& iter) mutable -> OptionOrRef<IterValueType> {
                          if (iter.first == iter.last) {
                              return nullopt;
                          }

@@ -101,9 +101,7 @@ class GeneratorIterator {
     GeneratorIterator() : value(nullopt) {}
     GeneratorIterator(Generator& gen) : gen(&gen), value(next(gen)) {}
 
-    decltype(auto) operator*() {
-        return *value;
-    }
+    decltype(auto) operator*() { return *value; }
     GeneratorIterator<Generator>& operator++() {
         value = next(*gen);
         return *this;
