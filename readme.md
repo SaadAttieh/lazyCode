@@ -120,7 +120,7 @@ __The bug?__  What if the user enters less than 10 numbers.  You'll be reading `
 
 There are two types of objects that can be created, `generators` and `collectors`.
 
-A generator is simply a state object paired with a function that can be called to produce values based off the state.  This is discussed later in the section * Building your own generators* .  A generator by itself does not execute any instructions.  This is why we call it lazy evaluation; it merely describes how values may be generated.  Values may be pulled from a generator via the `next()` function;, by using a for loop `for (auto i: generator)`, or by passing it to a collector.  Collectors pull values from a generator and perform a given action, see the section below on collectors. 
+A generator is simply a state object paired with a function that can be called to produce values based off the state.  This is discussed later in the section *creating your own generators*.  A generator by itself does not execute any instructions.  This is why we call it lazy evaluation; it merely describes how values may be generated.  Values may be pulled from a generator via the `next()` function;, by using a for loop `for (auto i: generator)`, or by passing it to a collector.  Collectors pull values from a generator and perform a given action, see the section below on collectors. 
 
 
 
@@ -263,6 +263,7 @@ decltype(auto) zip(Gen1&& gen1, Gen2&& gen2)```
 *  `zip(generator1,generator2)`
 <!-- -->
 
+### limit
 *  ```c++
 template <typename Generator = GeneratorHole>
 decltype(auto) limit(size_t n, Generator&& gen = GeneratorHole())```
@@ -270,8 +271,7 @@ decltype(auto) limit(size_t n, Generator&& gen = GeneratorHole())```
 *  `limit(number, generator)` or `generator | limit(number)`
 <!-- -->
 
-## 
-Collectors
+## Collectors
 
 Collectors evaluate generators.  This means pulling all the values from them.  Just as with composed generators, this can be done in the functional style  or using the pipe `|` style.  Note that you can pull values from a generator using its `begin/end` iterators, using a for loop `for (auto i: generator)` or using the `next(generator)` function.  
 
