@@ -355,6 +355,7 @@ decltype(auto) product(Generator&& gen = GeneratorHole())
 template <typename Generator = GeneratorHole>
 decltype(auto) min(Generator&& gen = GeneratorHole())
 ```
+
 *```c++
 [2]
 template <typename Val, typename Generator = GeneratorHole,
@@ -373,6 +374,7 @@ decltype(auto) min(Val defaultVal, Generator&& gen = GeneratorHole())
 template <typename Generator = GeneratorHole>
 decltype(auto) max(Generator&& gen = GeneratorHole())
 ```
+
 * ```c++
 [2]
 template <typename Val, typename Generator = GeneratorHole,
@@ -435,8 +437,8 @@ decltype(auto) insert(Container&& container,
 template <typename Stream, typename Generator = GeneratorHole>
 decltype(auto) write(Stream&& stream, Generator&& gen = GeneratorHole())
 ```
-* ```c++
 
+* ```c++
 [2]
 template <typename Stream, typename Interleave,
           typename Generator = GeneratorHole>
