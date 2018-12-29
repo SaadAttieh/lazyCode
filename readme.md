@@ -124,15 +124,15 @@ A generator is simply a state object paired with a function that can be called t
 
 
 
-## 
-Basic generators:
+## Basic generators:
 
 ### range:
 
 *  ```c++
 template <typename Number, typename std::enable_if<
                                std::is_integral<Number>::value, int>::type = 0>
-auto range(Number end);``` 
+auto range(Number end);
+```
 *  Create a generator of sequence of integral values.  Sequence begins at 0 (inclusive) , is followed by values increasing by 1 and stops at the specified last point (exclusive).
 *  `range(5)` generates `0,1,2,3,4,`
 <!-- -->
@@ -140,7 +140,8 @@ auto range(Number end);```
 *  ```c++
 template <typename Number, typename std::enable_if<
                                std::is_integral<Number>::value, int>::type = 0>
-auto range(Number start, Number end); ```
+auto range(Number start, Number end); 
+```
 *  Create a generator of sequence of integral values.  Sequence begins at specified start point (inclusive) , is followed by values increasing by 1 and stops at the specified last point (exclusive).
 *  `range(2,5)` generates `2,3,4`
 <!-- -->
@@ -148,7 +149,8 @@ auto range(Number start, Number end); ```
 
 *  ```c++
 template <typename Number1, typename Number2>
-auto range(Number1 start, Number1 end, Number2 increment); ```
+auto range(Number1 start, Number1 end, Number2 increment); 
+```
 *  Create a generator of sequence of values.  Sequence begins at specified start point (inclusive) , is followed by values increasing/decreasing by the specified increment and stops at the specified last point (exclusive).
 *  `range(0.1,1.0,0.2)` generates `0.1,0.3,0.5,0.7,0.9`
 <!-- -->
@@ -159,7 +161,8 @@ auto range(Number1 start, Number1 end, Number2 increment); ```
 
 *  ```c++
 template <typename Number1, typename Number2>
-auto infRange(Number1 start, Number2 increment)```
+auto infRange(Number1 start, Number2 increment)
+```
 * Create a never ending generator of sequence of values.  Sequence begins at specified start point (inclusive) and is followed by values increasing/decreasing by the specified increment.
 *  `infRange(0,2)` infinite range, generates `0,2,4,6,8,...`
 <!-- -->
@@ -169,7 +172,8 @@ auto infRange(Number1 start, Number2 increment)```
 
 *  ```c++
 template <typename Stream>
-auto readLines(Stream&& stream)```
+auto readLines(Stream&& stream)
+```
 * return a generator that reads lines from the given stream.  The generator yields a new string for each line.  If an lvalue is given, only a reference to the stream is held.  If a rvalue is given, the generator takes ownership, the stream is moved into the generator.
 *  `readLines(cout)` reads from std::cout, only a reference to cout is held
 *  `readLines(istringstream(someString))` reads from the newly created string stream, the string stream is moved into the generator.
@@ -181,7 +185,8 @@ auto readLines(Stream&& stream)```
 
 *  ```c++
 template <typename ReadType, typename Stream>
-auto read(Stream&& stream)```
+auto read(Stream&& stream)
+```
 * return a generator that reads from the given stream.  The generated type (the type of values pulled from the stream) must be specified as the first template parameter.  For example, to read integers from the stream, use `read<int>`.  If an lvalue is given, only a reference to the stream is held.  If a rvalue is given, the generator takes ownership, the stream is moved into the generator.
 *  `read<double>(cin)` read double values from cin.
 <!-- -->
@@ -191,7 +196,8 @@ auto read(Stream&& stream)```
 
 *  ```c++
 template <typename Container>
-decltype(auto) generator(Container&& container)```
+decltype(auto) generator(Container&& container)
+```
 * Create a generator from a container.  The generator uses the containers begin and end iterators via `std::begin, std::end`.  If an rvalue is given, the generator will take ownership of the container and move it into the generator object, otherwise the generator will only hold a reference to the container.
 *  `generator(v)` v can be a vector, map, set, anything with begin/end iterators. Only a reference to v is held.
 *  `generator(V())` V can be a vector, map, set, anything with begin/end iterators. Since it is a newly created container, it is moved into the generator.
@@ -201,7 +207,8 @@ decltype(auto) generator(Container&& container)```
 
 *  ```c++
 template <typename Container>
-decltype(auto) slice(Container&& container, size_t start, size_t last)```
+decltype(auto) slice(Container&& container, size_t start, size_t last)
+```
 * return a generator that iterates through a container from position start (inclusive) to position end (exclusive).
   If an rvalue is given, the generator will take ownership of the container and
  move it into the generator object, otherwise the generator will only hold a
@@ -212,7 +219,8 @@ decltype(auto) slice(Container&& container, size_t start, size_t last)```
 
 *  ```c++
 template <typename Iter>
-decltype(auto) slice(Iter first, Iter last)```
+decltype(auto) slice(Iter first, Iter last)
+```
 * Create a generator from a pair of iterators first and last.  The generator container yields values from first (inclusive) to last (exclusive).
 *  `string s; slice(s.begin(),s.end());`
 <!-- -->
@@ -228,7 +236,8 @@ Composed generators are as the name suggests, building new generators from exist
 
 *  ```c++
 template <typename MapperFunc, typename Generator = GeneratorHole>
-decltype(auto) map(MapperFunc&& mapperIn, Generator&& gen = GeneratorHole())```
+decltype(auto) map(MapperFunc&& mapperIn, Generator&& gen = GeneratorHole())
+```
 * Map one generator to another.  Produce a generator that returns the values produced by another generator applied to the given function.  The given function is invoked lazily to each value as requested. If the generator is not specified, a GeneratorBuilder is returned.  GeneratorBuilders are converted to generators by piping `|` a generator to them.
 *  `map(func,generator)` or `generator | map(func)`
 <!-- -->
@@ -238,7 +247,8 @@ decltype(auto) map(MapperFunc&& mapperIn, Generator&& gen = GeneratorHole())```
 *  ```c++
 template <typename FilterFunc, typename Generator = GeneratorHole>
 decltype(auto) filter(FilterFunc&& filterIn,
-                      Generator&& gen = GeneratorHole())```
+                      Generator&& gen = GeneratorHole())
+```
 * Produce a generator that filters the output of another generator according to the given function.  The function should accept each value produced by the given generator and return true if that value is to be forwarded, false otherwise. The given function is invoked lazily to each value as requested. If the generator is not specified, a GeneratorBuilder is returned. GeneratorBuilders are converted to generators by piping `|` a generator to them.
 *  `filter(func,generator)` or `generator | filter(func)`
 <!-- -->
@@ -249,7 +259,8 @@ decltype(auto) filter(FilterFunc&& filterIn,
 
 *  ```c++
 template <typename Generator = GeneratorHole>
-decltype(auto) enumerate(size_t count = 0, Generator&& gen = GeneratorHole()) {```
+decltype(auto) enumerate(size_t count = 0, Generator&& gen = GeneratorHole()) {
+```
 * Enumerate a generator.  Produce a generator that returns the values produced by another generator paired with an increasing count.  The default initial value of the count is 0.  Each yielded item will be pair(count,value).  If the generator is not specified, a GeneratorBuilder is returned. GeneratorBuilders are converted to generators by piping `|` a generator to them.
 *  `enumerate(generator)` or `generator | enumerate()`
 *  `enumerate(startingValue, generator)` or `generator | enumerate(startingValue)`
@@ -258,7 +269,8 @@ decltype(auto) enumerate(size_t count = 0, Generator&& gen = GeneratorHole()) {`
 ### zip
 *  ```c++
 template <typename Gen1, typename Gen2>
-decltype(auto) zip(Gen1&& gen1, Gen2&& gen2)```
+decltype(auto) zip(Gen1&& gen1, Gen2&& gen2)
+```
 * Combine two generators gen1 and gen2 into one.  Produce a generator that yields tuples where the first element of each tuple is a value pulled from gen1 and the second element is pulled from gen2.  The generator ends when either x or y end.
 *  `zip(generator1,generator2)`
 <!-- -->
@@ -266,7 +278,8 @@ decltype(auto) zip(Gen1&& gen1, Gen2&& gen2)```
 ### limit
 *  ```c++
 template <typename Generator = GeneratorHole>
-decltype(auto) limit(size_t n, Generator&& gen = GeneratorHole())```
+decltype(auto) limit(size_t n, Generator&& gen = GeneratorHole())
+```
 * Produce a generator that takes the first n values produced by another generator.If the generator is not specified, a GeneratorBuilder is returned. GeneratorBuilders are converted to generators by piping `|` a generator to them.
 *  `limit(number, generator)` or `generator | limit(number)`
 <!-- -->
@@ -282,6 +295,7 @@ auto g = lz::generator(v) | filter(...);
 for (auto& i: g) {
     //change i and it will be changing values in v
 }
+
 ```
 However, if the generator yields rvalues, for example, the map generator, then the collector or for loop will see these as rvalues.  
 
@@ -290,7 +304,8 @@ However, if the generator yields rvalues, for example, the map generator, then t
 
 *  ```c++
 template <typename Func, typename Generator = GeneratorHole>
-decltype(auto) forEach(Func&& func, Generator&& gen = GeneratorHole())```
+decltype(auto) forEach(Func&& func, Generator&& gen = GeneratorHole())
+```
 * Apply the given function to each value produced by the given generator.  The return value of the function is ignored and may be void.  If the generator is not specified, a collector is returned. Collectors remember the operation to be executed.  The operation is executed when a generator is piped `|` to it.
 *  `generator | forEach(func)` or `forEach(func,generator)`
 <!-- -->
@@ -305,7 +320,8 @@ decltype(auto) forEach(Func&& func, Generator&& gen = GeneratorHole())```
 
 *  ```c++
 template <typename Generator = GeneratorHole>
-decltype(auto) count(Generator&& gen = GeneratorHole())```
+decltype(auto) count(Generator&& gen = GeneratorHole())
+```
 * Count the number of values yielded by the given generator.  If the generator is not specified, a collector is returned. Collectors remember the operation to be executed.  The operation is executed when a generator is piped `|` to it.
 *  `generator | count(), count(generator)`
 <!-- -->
@@ -314,7 +330,8 @@ decltype(auto) count(Generator&& gen = GeneratorHole())```
 *  ```c++
 template <typename Generator = GeneratorHole,
           detail::EnableIfType<detail::GeneratorBase, Generator> = 0>
-decltype(auto) sum(Generator&& gen = GeneratorHole())```
+decltype(auto) sum(Generator&& gen = GeneratorHole())
+```
 * Return the sum of the values produced by a generator.  If the generator is not specified, a collector is returned. Collectors remember the operation to be executed.  The operation is executed when a generator is piped `|` to it.
 *  `generator | sum(), sum(generator)`
 <!-- -->
@@ -325,7 +342,8 @@ decltype(auto) sum(Generator&& gen = GeneratorHole())```
 *  ```c++
 template <typename Generator = GeneratorHole,
           detail::EnableIfType<detail::GeneratorBase, Generator> = 0>
-decltype(auto) product(Generator&& gen = GeneratorHole())```
+decltype(auto) product(Generator&& gen = GeneratorHole())
+```
 * Return the product (multiplication) of the values produced by a generator.If the generator is not specified, a collector is returned. Collectors remember the operation to be executed.  The operation is executed when a generator is piped `|` to it.
 *  `generator | product(), product(generator)`
 <!-- -->
@@ -334,11 +352,13 @@ decltype(auto) product(Generator&& gen = GeneratorHole())```
 
 *  [1]```c++
 template <typename Generator = GeneratorHole>
-decltype(auto) min(Generator&& gen = GeneratorHole())```
+decltype(auto) min(Generator&& gen = GeneratorHole())
+```
 *  [2] ```c++
 template <typename Val, typename Generator = GeneratorHole,
           detail::EnableIfType<detail::GeneratorBase, Generator> = 0>
-decltype(auto) min(Val defaultVal, Generator&& gen = GeneratorHole())```
+decltype(auto) min(Val defaultVal, Generator&& gen = GeneratorHole())
+```
 * Return the minimum value produced by a generator.  If the generator yields no values, the default value is returned see [2].  If a default value is not given (see [1]), an optional is returned.  The optional holds a value in the case the generator yielded a value, otherwise the optional will be empty (nullopt). The optional object is a c++14 implementation of std::optional from c++17.  The implementation is taken from GitHub [akrzemi1/Optional](https://github.com/akrzemi1/Optional). If the generator is not specified, a collector is returned. Collectors remember the operation to be executed.  The operation is executed when a generator is piped `|` to it.
 *  `auto m = generator | min(defaultVal) or `auto m =min(defaultVal, generator)`. `m` holds minimum value. `defaultVal`
 *  `auto m = generator | min()` or `auto m = min(generator)`. Check if not empty with `if (m)`, access min value with `* m` 
@@ -348,11 +368,13 @@ decltype(auto) min(Val defaultVal, Generator&& gen = GeneratorHole())```
 
 *  [1]```c++
 template <typename Generator = GeneratorHole>
-decltype(auto) max(Generator&& gen = GeneratorHole())```
+decltype(auto) max(Generator&& gen = GeneratorHole())
+```
 *  [2] ```c++
 template <typename Val, typename Generator = GeneratorHole,
           detail::EnableIfType<detail::GeneratorBase, Generator> = 0>
-decltype(auto) max(Val defaultVal, Generator&& gen = GeneratorHole())```
+decltype(auto) max(Val defaultVal, Generator&& gen = GeneratorHole())
+```
 * Return the maximum value produced by a generator.  If the generator yields no values, the default value is returned see [2].  If a default value is not given (see [1]), an optional is returned.  The optional holds a value in the case the generator yielded a value, otherwise the optional will be empty (nullopt). The optional object is a c++14 implementation of std::optional from c++17.  The implementation is taken from GitHub [akrzemi1/Optional](https://github.com/akrzemi1/Optional). If the generator is not specified, a collector is returned. Collectors remember the operation to be executed.  The operation is executed when a generator is piped `|` to it.
 *  `auto m = generator | max(defaultVal) or `auto m =max(defaultVal, generator)`. `m` holds maximum value. `defaultVal`
 *  `auto m = generator | max()` or `auto m = max(generator)`. Check if not empty with `if (m)`, access max value with `* m` 
@@ -366,7 +388,8 @@ decltype(auto) max(Val defaultVal, Generator&& gen = GeneratorHole())```
 template <typename Accum, typename Func, typename Generator = GeneratorHole,
           detail::EnableIfType<detail::GeneratorBase, Generator> = 0>
 decltype(auto) fold(Func&& func, Accum accum,
-                    Generator&& gen = GeneratorHole())```
+                    Generator&& gen = GeneratorHole())
+```
 * Combine the values produced by a generator using the specified function and return the result.  The function should take two arguments and return a single value.  The accum parameter (accumulator) specifies the initial value. The return type of the function must be convertible to the accum type. If the generator is not specified, a collector is returned. Collectors remember the operation to be executed.  The operation is executed when a generator is piped `|` to it.
 *  `generator | fold(func, accumulator )` or `fold(func,accumulator,generator)`
 <!-- -->
@@ -376,7 +399,8 @@ decltype(auto) fold(Func&& func, Accum accum,
 *  ```c++
 template <typename Container, typename Generator = GeneratorHole>
 decltype(auto) append(Container&& container,
-                      Generator&& gen = GeneratorHole())```
+                      Generator&& gen = GeneratorHole())
+```
 * Append each value produced by the given generator to the given container, using container.emplace_back().  For unordered containers, see `insert`.  Note that a rvalue can be given as the container parameter, for example constructing a new container inline (`append(vector<int>())`), in which case the collector stores the container and returns it after appending the values. Otherwise, only a reference to the container is held by the collector.  If the generator is not specified, a collector is returned. Collectors remember the operation to be executed. The operation is executed when a generator is piped `|` to it.
 *  `list<int> c; generator | append(c)` or `append(c,generator)`
 *  `auto c = generator | append(vector<int>())` or `auto c = append(vector<int>(),generator)`
@@ -391,7 +415,8 @@ decltype(auto) append(Container&& container,
 *  ```c++
 template <typename Container, typename Generator = GeneratorHole>
 decltype(auto) insert(Container&& container,
-                      Generator&& gen = GeneratorHole())```
+                      Generator&& gen = GeneratorHole())
+```
 * Insert each value produced by the given generator to the given container, using container.emplace().  This is for unordered containers.  For ordered containers, see `append`.  Note that a rvalue can be given as the container parameter, for example constructing a new container inline (`append(set<int>())`), in which case the collector stores the container and returns it after inserting the values. Otherwise, only a reference to the container is held by the collector. If the generator is not specified, a collector is returned. Collectors remember the operation to be executed. The operation is executed when a generator is piped `|` to it.
 *  `set<int> c; generator | insert(c)` or `insert(c,generator)`
 *  `auto c = generator | append(map<int,int>())` or `auto c = append(map<int,int>(),generator)`
@@ -402,7 +427,8 @@ decltype(auto) insert(Container&& container,
 
 *  [1] ```c++
 template <typename Stream, typename Generator = GeneratorHole>
-decltype(auto) write(Stream&& stream, Generator&& gen = GeneratorHole())```
+decltype(auto) write(Stream&& stream, Generator&& gen = GeneratorHole())
+```
 *  [2] ```c++
 template <typename Stream, typename Interleave,
           typename Generator = GeneratorHole>
@@ -437,6 +463,7 @@ decltype(auto) write(Stream&& stream, Interleave i,
             return lz::nullopt;
         }
     });
-    ```
+    
+```
 
 
