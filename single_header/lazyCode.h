@@ -2,6 +2,7 @@
 #define LAZYCODE_LAZYCODE_H_
 #ifndef LAZYCODE_BASICCOLLECTORS_H_
 #define LAZYCODE_BASICCOLLECTORS_H_
+#include <sstream>
 #ifndef LAZYCODE_COLLECTOR_H_
 #define LAZYCODE_COLLECTOR_H_
 #include <iostream>
@@ -2022,18 +2023,19 @@ decltype(auto) zip(Gen1&& gen1, Gen2&& gen2) {
 
 /*
  * Enumerate a generator.  Produce a generator that returns the values
- * produced by another generator paired with the number of elements that have
- * been yielded before.  Each yielded item will be pair(count,value).  If the
- * generator is not specified, a GeneratorBuilder is returned.
- * GeneratorBuilders are converted to generators by piping `|` a generator to
- * them.
+ * produced by another generator paired with an increasing count.  The default
+ * initial value of the count is 0.  Each yielded item will be
+ * pair(count,value).  If the generator is not specified, a GeneratorBuilder is
+ * returned. GeneratorBuilders are converted to generators by piping `|` a
+ * generator to them.
  */
 template <typename Generator = GeneratorHole,
           detail::EnableIfType<detail::GeneratorBase, Generator> = 0>
-decltype(auto) enumerate(Generator&& gen = GeneratorHole()) {
-    return buildOrDelay(generatorBuilder([](auto&& gen) mutable {
+decltype(auto) enumerate(size_t count = 0, Generator&& gen = GeneratorHole()) {
+    return buildOrDelay(generatorBuilder([count](auto&& gen) mutable {
                             typedef decltype(gen) Gen;
-                            return zip(infRange(0, 1), std::forward<Gen>(gen));
+                            return zip(infRange(count, 1),
+                                       std::forward<Gen>(gen));
                         }),
                         std::forward<Generator>(gen));
 }

@@ -1,5 +1,6 @@
 #ifndef LAZYCODE_BASICCOLLECTORS_H_
 #define LAZYCODE_BASICCOLLECTORS_H_
+#include <sstream>
 #include "collector.h"
 namespace LazyCode {
 

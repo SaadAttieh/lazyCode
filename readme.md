@@ -134,7 +134,9 @@ Here we cover the API.  First a quick index of the available functions (Full doc
     * Lazy map: `map(func,generator)` or `generator | map(func)`
     * Lazy filter: `filter(func,generator)` or `generator | filter(func)`
     * `map(toUpperCase, filter([] (auto&& l) { return l.size() > 0; }, readLines(cin) ))`
-    * Enumerate: `enumerate(generator)` or `generator | enumerate()`
+    * Enumerate:
+        * `enumerate(generator)` or `generator | enumerate()`
+        * `enumerate(startingValue, generator)` or `generator | enumerate(startingValue)`
     * zip: `zip(generator1,generator2)`
 4. Output: 
     * forEach: `generator | forEach(func)` or `forEach(func,generator)`
