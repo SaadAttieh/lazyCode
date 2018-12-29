@@ -159,7 +159,12 @@ Here we cover the API.  First a quick index of the available functions (Full doc
         * Create new stream and write to it: `auto s = generator | write(Stream())` or `auto s = write(Stream(),generator)`
         * Create new stream and write to it with separator i: `auto s = generator | write(Stream(),i)` or `auto s = write(Stream(),i,generator)`
         * Write to string using the above interface: `string s = (generator | write(std::ostringstream(),i)).str();`
-5. Creating your own generators:
+4.  Useful functions:
+    * `unpack(f)` Create a function `g` from `f`.  `g` accepts pairs/tuples and unpacks the tuple members and gives them as arguments to `f`.
+        * `generator(map) | forEach(unpack([] (auto&& key, auto&& value) { //something with key and value }))`
+        * `enumerate(generator) | forEach(unpack([] (auto&& index, auto&& value) { //something with index and value }))`
+    * `std::string tostring(m1,m2,...,mn)` varadic function, prints `m1,m2,...,mn` using `ooperator<<` to a string.
+6. Creating your own generators:
     * More details coming soon.  Here a toy example, a generator that generates powers of 2 up to 1024.
     ```c++
     auto g = lz::generator(1, [](int i) -> lz::optional<int> {
