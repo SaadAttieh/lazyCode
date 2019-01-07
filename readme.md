@@ -214,7 +214,7 @@ decltype(auto) slice(Container&& container, size_t start, size_t last)
  move it into the generator object, otherwise the generator will only hold a
  reference to the container.
 *  `slice(v,2,4)` Only a reference to v is held.
-*  `slice(V(),2,4)` *  `generator(V())` V can be a vector, map, set, anything with begin/end iterators. Since it is a newly created container, it is moved into the generator.
+*  `slice(V(),2,4)` Since `V` is a newly created container, it is moved into the generator.
 <!-- -->
 
 ```c++
@@ -356,10 +356,9 @@ template <typename Generator = GeneratorHole>
 decltype(auto) min(Generator&& gen = GeneratorHole())
 ```
 
-*```c++
+```c++
 [2]
-template <typename Val, typename Generator = GeneratorHole,
-          detail::EnableIfType<detail::GeneratorBase, Generator> = 0>
+template <typename Val, typename Generator = GeneratorHole>
 decltype(auto) min(Val defaultVal, Generator&& gen = GeneratorHole())
 ```
 * Return the minimum value produced by a generator.  If the generator yields no values, the default value is returned see [2].  If a default value is not given (see [1]), an optional is returned.  The optional holds a value in the case the generator yielded a value, otherwise the optional will be empty (nullopt). The optional object is a c++14 implementation of std::optional from c++17.  The implementation is taken from GitHub [akrzemi1/Optional](https://github.com/akrzemi1/Optional). If the generator is not specified, a collector is returned. Collectors remember the operation to be executed.  The operation is executed when a generator is piped `|` to it.
@@ -377,10 +376,10 @@ decltype(auto) max(Generator&& gen = GeneratorHole())
 
 ```c++
 [2]
-template <typename Val, typename Generator = GeneratorHole,
-          detail::EnableIfType<detail::GeneratorBase, Generator> = 0>
+template <typename Val, typename Generator = GeneratorHole>
 decltype(auto) max(Val defaultVal, Generator&& gen = GeneratorHole())
 ```
+
 * Return the maximum value produced by a generator.  If the generator yields no values, the default value is returned see [2].  If a default value is not given (see [1]), an optional is returned.  The optional holds a value in the case the generator yielded a value, otherwise the optional will be empty (nullopt). The optional object is a c++14 implementation of std::optional from c++17.  The implementation is taken from GitHub [akrzemi1/Optional](https://github.com/akrzemi1/Optional). If the generator is not specified, a collector is returned. Collectors remember the operation to be executed.  The operation is executed when a generator is piped `|` to it.
 *  `auto m = generator | max(defaultVal) or `auto m =max(defaultVal, generator)`. `m` holds maximum value. `defaultVal`
 *  `auto m = generator | max()` or `auto m = max(generator)`. Check if not empty with `if (m)`, access max value with `* m` 
