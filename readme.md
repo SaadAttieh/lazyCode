@@ -128,7 +128,7 @@ A generator is simply a state object paired with a function that can be called t
 
 ### range:
 
-*  ```c++
+```c++
 template <typename Number, typename std::enable_if<
                                std::is_integral<Number>::value, int>::type = 0>
 auto range(Number end);
@@ -137,7 +137,7 @@ auto range(Number end);
 *  `range(5)` generates `0,1,2,3,4,`
 <!-- -->
 
-*  ```c++
+```c++
 template <typename Number, typename std::enable_if<
                                std::is_integral<Number>::value, int>::type = 0>
 auto range(Number start, Number end); 
@@ -147,7 +147,7 @@ auto range(Number start, Number end);
 <!-- -->
 
 
-*  ```c++
+```c++
 template <typename Number1, typename Number2>
 auto range(Number1 start, Number1 end, Number2 increment); 
 ```
@@ -159,7 +159,7 @@ auto range(Number1 start, Number1 end, Number2 increment);
 ### infRange
 
 
-*  ```c++
+```c++
 template <typename Number1, typename Number2>
 auto infRange(Number1 start, Number2 increment)
 ```
@@ -170,7 +170,7 @@ auto infRange(Number1 start, Number2 increment)
 
 ### readLines
 
-*  ```c++
+```c++
 template <typename Stream>
 auto readLines(Stream&& stream)
 ```
@@ -183,7 +183,7 @@ auto readLines(Stream&& stream)
 
 ### read
 
-*  ```c++
+```c++
 template <typename ReadType, typename Stream>
 auto read(Stream&& stream)
 ```
@@ -194,7 +194,7 @@ auto read(Stream&& stream)
 
 ### generator
 
-*  ```c++
+```c++
 template <typename Container>
 decltype(auto) generator(Container&& container)
 ```
@@ -205,7 +205,7 @@ decltype(auto) generator(Container&& container)
 
 ### slice
 
-*  ```c++
+```c++
 template <typename Container>
 decltype(auto) slice(Container&& container, size_t start, size_t last)
 ```
@@ -217,7 +217,7 @@ decltype(auto) slice(Container&& container, size_t start, size_t last)
 *  `slice(V(),2,4)` *  `generator(V())` V can be a vector, map, set, anything with begin/end iterators. Since it is a newly created container, it is moved into the generator.
 <!-- -->
 
-*  ```c++
+```c++
 template <typename Iter>
 decltype(auto) slice(Iter first, Iter last)
 ```
@@ -234,7 +234,7 @@ Composed generators are as the name suggests, building new generators from exist
 
 ### Map
 
-*  ```c++
+```c++
 template <typename MapperFunc, typename Generator = GeneratorHole>
 decltype(auto) map(MapperFunc&& mapperIn, Generator&& gen = GeneratorHole())
 ```
@@ -244,7 +244,7 @@ decltype(auto) map(MapperFunc&& mapperIn, Generator&& gen = GeneratorHole())
 
 ### filter
 
-*  ```c++
+```c++
 template <typename FilterFunc, typename Generator = GeneratorHole>
 decltype(auto) filter(FilterFunc&& filterIn,
                       Generator&& gen = GeneratorHole())
@@ -257,7 +257,7 @@ decltype(auto) filter(FilterFunc&& filterIn,
 
 ### enumerate
 
-*  ```c++
+```c++
 template <typename Generator = GeneratorHole>
 decltype(auto) enumerate(size_t count = 0, Generator&& gen = GeneratorHole()) {
 ```
@@ -267,7 +267,7 @@ decltype(auto) enumerate(size_t count = 0, Generator&& gen = GeneratorHole()) {
 <!-- -->
 
 ### zip
-*  ```c++
+```c++
 template <typename Gen1, typename Gen2>
 decltype(auto) zip(Gen1&& gen1, Gen2&& gen2)
 ```
@@ -276,7 +276,7 @@ decltype(auto) zip(Gen1&& gen1, Gen2&& gen2)
 <!-- -->
 
 ### limit
-*  ```c++
+```c++
 template <typename Generator = GeneratorHole>
 decltype(auto) limit(size_t n, Generator&& gen = GeneratorHole())
 ```
@@ -302,7 +302,7 @@ However, if the generator yields rvalues, for example, the map generator, then t
 
 ### forEach
 
-*  ```c++
+```c++
 template <typename Func, typename Generator = GeneratorHole>
 decltype(auto) forEach(Func&& func, Generator&& gen = GeneratorHole())
 ```
@@ -318,7 +318,7 @@ decltype(auto) forEach(Func&& func, Generator&& gen = GeneratorHole())
 ### count
 
 
-*  ```c++
+```c++
 template <typename Generator = GeneratorHole>
 decltype(auto) count(Generator&& gen = GeneratorHole())
 ```
@@ -327,7 +327,7 @@ decltype(auto) count(Generator&& gen = GeneratorHole())
 <!-- -->
 
 ### sum
-*  ```c++
+```c++
 template <typename Generator = GeneratorHole,
           detail::EnableIfType<detail::GeneratorBase, Generator> = 0>
 decltype(auto) sum(Generator&& gen = GeneratorHole())
@@ -339,7 +339,7 @@ decltype(auto) sum(Generator&& gen = GeneratorHole())
 
 ### product
 
-*  ```c++
+```c++
 template <typename Generator = GeneratorHole,
           detail::EnableIfType<detail::GeneratorBase, Generator> = 0>
 decltype(auto) product(Generator&& gen = GeneratorHole())
@@ -350,7 +350,7 @@ decltype(auto) product(Generator&& gen = GeneratorHole())
 
 ### min
 
-* ```c++
+```c++
 [1]
 template <typename Generator = GeneratorHole>
 decltype(auto) min(Generator&& gen = GeneratorHole())
@@ -369,13 +369,13 @@ decltype(auto) min(Val defaultVal, Generator&& gen = GeneratorHole())
 
 ### max
 
-* ```c++
+```c++
 [1]
 template <typename Generator = GeneratorHole>
 decltype(auto) max(Generator&& gen = GeneratorHole())
 ```
 
-* ```c++
+```c++
 [2]
 template <typename Val, typename Generator = GeneratorHole,
           detail::EnableIfType<detail::GeneratorBase, Generator> = 0>
@@ -390,7 +390,7 @@ decltype(auto) max(Val defaultVal, Generator&& gen = GeneratorHole())
 ### fold
 
 
-*  ```c++
+```c++
 template <typename Accum, typename Func, typename Generator = GeneratorHole,
           detail::EnableIfType<detail::GeneratorBase, Generator> = 0>
 decltype(auto) fold(Func&& func, Accum accum,
@@ -402,7 +402,7 @@ decltype(auto) fold(Func&& func, Accum accum,
 
 ### append
 
-*  ```c++
+```c++
 template <typename Container, typename Generator = GeneratorHole>
 decltype(auto) append(Container&& container,
                       Generator&& gen = GeneratorHole())
@@ -418,7 +418,7 @@ decltype(auto) append(Container&& container,
 
 
 
-*  ```c++
+```c++
 template <typename Container, typename Generator = GeneratorHole>
 decltype(auto) insert(Container&& container,
                       Generator&& gen = GeneratorHole())
@@ -431,14 +431,14 @@ decltype(auto) insert(Container&& container,
 
 ### write
 
-* ```c++
+```c++
 
 [1]
 template <typename Stream, typename Generator = GeneratorHole>
 decltype(auto) write(Stream&& stream, Generator&& gen = GeneratorHole())
 ```
 
-* ```c++
+```c++
 [2]
 template <typename Stream, typename Interleave,
           typename Generator = GeneratorHole>
