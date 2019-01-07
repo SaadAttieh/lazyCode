@@ -415,8 +415,6 @@ decltype(auto) append(Container&& container,
 ### insert
 
 
-
-
 ```c++
 template <typename Container, typename Generator = GeneratorHole>
 decltype(auto) insert(Container&& container,
@@ -431,7 +429,6 @@ decltype(auto) insert(Container&& container,
 ### write
 
 ```c++
-
 [1]
 template <typename Stream, typename Generator = GeneratorHole>
 decltype(auto) write(Stream&& stream, Generator&& gen = GeneratorHole())
@@ -442,27 +439,28 @@ decltype(auto) write(Stream&& stream, Generator&& gen = GeneratorHole())
 template <typename Stream, typename Interleave,
           typename Generator = GeneratorHole>
 decltype(auto) write(Stream&& stream, Interleave i,
-                     Generator&& gen = GeneratorHole())``` 
+                     Generator&& gen = GeneratorHole())
+``` 
 * Write each value produced by the given generator to the given stream.  An interleave value can be optionally specified (see [2]), in which case the interleave value will be written to the stream before each generated value apart from the first.  This is sometimes known as join.  Note that a rvalue can be given as the stream parameter, for example constructing a new stream inline (`write(ostringstream())`), in which case the collector stores the stream and returns it after printing the values to it. Otherwise, only a reference to the stream is held by the collector.  If the generator is not specified, a collector is returned. Collectors remember the operation to be executed.  The operation is executed when a generator is piped `|` to it.
 *  Write to existing stream s: `generator | write(s)` or `write(s,generator)`
 *  Write to existing stream s interleaved with separator i: `generator | write(s,i)` or `write(s,i,generator)`
 *  Create new stream and write to it: `auto s = generator | write(Stream())` or `auto s = write(Stream(),generator)`
 *  Create new stream and write to it with separator i: `auto s = generator | write(Stream(),i)` or `auto s = write(Stream(),i,generator)`
-*  write with join to string using the above interface: `string s = (generator | write(std::ostringstream(),join)).str();`
+*  Do a string join operation, that is, write to a string, using the above interface: `string s = (generator | write(std::ostringstream(),join)).str();`
 <!-- -->
 
 
 
 ## Useful functions:
-    *  `unpack(f)` Create a function `g` from `f`.  `g` accepts pairs/tuples and unpacks the tuple members and gives them as arguments to `f`.
+* `unpack(f)` Create a function `g` from `f`.  `g` accepts pairs/tuples and unpacks the tuple members and gives them as arguments to `f`.
         *  `map<int,int> m; generator(m) | forEach(unpack([] (auto&& key, auto&& value) { //something with key and value }))`
         *  `enumerate(generator) | forEach(unpack([] (auto&& index, auto&& value) { //something with index and value }))`
-    *  `std::string tostring(m1,m2,...,mn)` varadic function, prints `m1,m2,...,mn` using `ooperator<<` to a string.
+*  `std::string tostring(m1,m2,...,mn)` varadic function, prints `m1,m2,...,mn` using `ooperator<<` to a string.
 
 ## Creating your own generators:
 
 
-    *  More details coming soon.  Here a toy example, a generator that generates powers of 2 up to 1024.
+* More details coming soon.  Here a toy example, a generator that generates powers of 2 up to 1024.
     ```c++
     auto g = lz::generator(1, [](int i) -> lz::optional<int> {
         i * = 2;
