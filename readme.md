@@ -109,7 +109,7 @@ __The bug?__  What if the user enters less than 10 numbers.  You'll be reading `
 # installation:
 
 *  The project is built as a standard Cmake header only interface and can be included via cmake's external_project_add or as a sub directory.  Exact instructions for this are coming soon.
-*  __For your convenience__, a single header is also maintained in the repo's top level directory `single_header`.
+*  __For your convenience__, a single header is also maintained in the repo's top level directory `single_header`.  For contributers, notes on how to recreate the single header after a source change is described at the end of this readme.
 *  Download the header file here: [lazyCode.h](single_header/lazyCode.h)
 *  A __c++14__ compiler is required.
 
@@ -474,3 +474,14 @@ decltype(auto) write(Stream&& stream, Interleave i,
 ```
 
 
+
+
+# For contributers: rebuilding the single header file:
+
+* The single header is built via a python3 script: [single_header/makeSingleHeader.py](single_header/makeSingleHeader.py).
+* Usage: `./makeSingleHeader.py starting_file [include_path_1] [include_path_2] ... [include_path_n]`
+* The script builds a string, copying the source from starting_file, replacing any includes with with the source contained at the file pointed to by the include.  This is done recursively for all included files.  
+* The script (by choice) only identifies includes specified by quotes `include "..."` and not other others such as `include <...>`.  This can be trivially changed if necessary.
+* Preprocess macros are not executed.  The only guard put in place is that a file is not included more than once.
+* If a file `a` includes another file `b` via a path not relative to `a`, a path to the parent of `b` must be listed as an additional argument.  For example, currently the current source [include/lazyCode/lazyCode.h](include/lazyCode/lazyCode.h)  contains the include `#include "optional/optional.hpp"`.  However, this file is located in [include/optional/optional.hpp](include/optional/optional.hpp).  Therefore, the script is run as follows to specifie [include](include) as an additional include path: 
+    ```single_header/makeSingleHeader.py include/lazyCode/lazyCode.h include > single_header/lazyCode.h```
