@@ -2,7 +2,7 @@
 #define LAZYCODE_GENERATOR_H_
 #include <type_traits>
 #include <utility>
-#include "optional/optional.hpp"
+#include <nonstd/optional.hpp>
 #include "utils.h"
 namespace LazyCode {
 namespace detail {
