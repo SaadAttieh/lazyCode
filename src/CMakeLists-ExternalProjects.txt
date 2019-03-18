@@ -11,12 +11,12 @@ ExternalProject_Add(
   UPDATE_COMMAND ""
   PATCH_COMMAND ""
   
-  SOURCE_DIR "${CMAKE_SOURCE_DIR}/include/optional"
+  SOURCE_DIR "${PROJECT_SOURCE_DIR}/include/optional"
   
   TEST_COMMAND ""
       INSTALL_COMMAND ""
 )
 
-include_directories("${CMAKE_SOURCE_DIR}/include/optional")
+include_directories("${PROJECT_SOURCE_DIR}/include/optional")
 add_dependencies(lazyCode optional)
 
