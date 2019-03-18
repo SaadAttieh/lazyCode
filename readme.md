@@ -471,7 +471,7 @@ decltype(auto) write(Stream&& stream, Interleave i,
         }
     });
     
-```
+    ```
 
 
 
