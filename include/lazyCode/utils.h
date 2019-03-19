@@ -5,7 +5,7 @@
 #include <sstream>
 #include <tuple>
 #include <utility>
-#include "optional/optional.hpp"
+#include <nonstd/optional.hpp>
 #ifdef LAZY_CODE_NO_MACROS
 #define lazyCodeMacro(x)  // nothing
 #else
@@ -14,9 +14,9 @@
 
 namespace LazyCode {
 
-using std::experimental::make_optional;
-using std::experimental::nullopt;
-using std::experimental::optional;
+using nonstd::make_optional;
+using nonstd::nullopt;
+using nonstd::optional;
 
 template <typename T>
 using optionalref = optional<std::reference_wrapper<T>>;

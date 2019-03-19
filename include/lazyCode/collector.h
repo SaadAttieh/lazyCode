@@ -4,7 +4,7 @@
 #include <type_traits>
 #include <utility>
 #include "generator.h"
-#include "optional/optional.hpp"
+#include <nonstd/optional.hpp>
 #include "utils.h"
 namespace LazyCode {
 namespace detail {
