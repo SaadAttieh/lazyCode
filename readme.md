@@ -106,12 +106,37 @@ Writing the equivalent of the above in plain old c++ is more cumbersome and can 
 __The bug?__  What if the user enters less than 10 numbers.  You'll be reading `EOF` symbols into your `total`.  Silly example, but the idea is there.  This is not only more compact and readable, it can enable safer code.
 
 
-# installation:
+# Installation:
 
-*  The project is built as a standard Cmake header only interface and can be included via cmake's external_project_add or as a sub directory.  Exact instructions for this are coming soon.
-*  __For your convenience__, a single header is also maintained in the repo's top level directory `single_header`.  For contributers, notes on how to recreate the single header after a source change is described at the end of this readme.
-*  Download the header file here: [lazyCode.h](single_header/lazyCode.h)
-*  A __c++14__ compiler is required.
+*  A __c++14__ or above compiler is required.
+*  For your convenience, a single header is maintained in the repo's top level directory `single_header`.  `LazyCode` can therefore be used just by including this single header, [single_header/lazyCode.h](single_header/lazyCode.h).
+* Alternatively, the project is built as a standard Cmake header only interface and can be included into a cmake project via cmake's `add_subdirectory`. 
+*  For contributers, notes on how to recreate the single header after a source change is described at the end of this readme.
+
+## Method 1: include the single header (easiest)
+
+1. [Download the single header here](single_header/lazyCode.h)
+1.  Include it from any `c++` file: `#include "path_to_lazyCode.h"`
+
+or, to stay up to date with the latest release, consider adding `lazyCode` as a sub module:
+
+```
+git submodule add https://github.com/SaadAttieh/lazyCode
+```
+
+## Method 2: as a cmake sub directory.
+
+```
+#add lazyCode as a submodule:
+git submodule add https://github.com/SaadAttieh/lazyCode
+#Tell git to download submodules of lazyCode
+git submodule init ; git submodule update
+```
+
+Then add this to your cmake file:
+```
+add_subdirectory (lazyCode)
+```
 
 
 # The docs:
