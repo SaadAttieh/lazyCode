@@ -1,1 +1,3 @@
-add_subdirectory(optional-lite)
+if(NOT TARGET optional-lite)
+    add_subdirectory(optional-lite)
+endif()
